@@ -82,6 +82,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Initialize carousel
   initCarousel();
+
+  // Add touch/swipe support for all carousels
+  addSwipeSupport();
 });
 
 // Carousel functionality
@@ -406,3 +409,72 @@ function updateQuotingCarousel() {
     }
   });
 }
+
+// Touch/Swipe Support for Carousels
+function addSwipeSupport() {
+  // Add swipe to main carousel (page-3)
+  const mainCarousel = document.querySelector('#page-3 .carousel-container');
+  if (mainCarousel) {
+    addSwipeListener(mainCarousel, moveCarousel);
+  }
+
+  // Add swipe to wholesale carousel (page-2)
+  const wholesaleCarousel = document.querySelector('.wholesale-carousel');
+  if (wholesaleCarousel) {
+    addSwipeListener(wholesaleCarousel, moveWholesaleCarousel);
+  }
+
+  // Add swipe to quoting carousel (page-1)
+  const quotingCarousel = document.querySelector('.quoting-carousel');
+  if (quotingCarousel) {
+    addSwipeListener(quotingCarousel, moveQuotingCarousel);
+  }
+}
+
+function addSwipeListener(element, moveFunction) {
+  let touchStartX = 0;
+  let touchEndX = 0;
+  let touchStartY = 0;
+  let touchEndY = 0;
+  const minSwipeDistance = 50; // Minimum distance for a swipe
+
+  element.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  element.addEventListener('touchend', function(e) {
+    touchEndX = e.changedTouches[0].screenX;
+    touchEndY = e.changedTouches[0].screenY;
+    handleSwipe();
+  }, { passive: true });
+
+  function handleSwipe() {
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+
+    // Check if horizontal swipe is greater than vertical (to avoid interfering with scrolling)
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+      if (deltaX < 0) {
+        // Swipe left - next slide
+        moveFunction(1);
+      } else {
+        // Swipe right - previous slide
+        moveFunction(-1);
+      }
+    }
+  }
+}
+
+// Prevent horizontal scroll bounce on iOS
+document.addEventListener('touchmove', function(e) {
+  if (e.target.closest('.carousel-container')) {
+    // Allow vertical scrolling but prevent horizontal bounce
+    const touch = e.touches[0];
+    const carousel = e.target.closest('.carousel-container');
+    if (carousel) {
+      // This helps prevent the page from bouncing when swiping on carousel
+      e.preventDefault();
+    }
+  }
+}, { passive: false });
