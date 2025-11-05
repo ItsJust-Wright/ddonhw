@@ -85,6 +85,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Add touch/swipe support for all carousels
   addSwipeSupport();
+
+  // Initialize lazy loading for images
+  initLazyLoading();
 });
 
 // Carousel functionality
@@ -163,14 +166,31 @@ function switchProject(project) {
   // Clear and rebuild track
   track.innerHTML = '';
 
-  // Add images
-  images.forEach(img => {
+  // Add images with lazy loading
+  images.forEach((img, index) => {
     const imgElement = document.createElement('img');
-    imgElement.src = img.src;
+    if (index === 0) {
+      // First image loads immediately
+      imgElement.src = img.src;
+      imgElement.loading = 'eager';
+    } else {
+      // Other images lazy load
+      imgElement.dataset.src = img.src;
+      imgElement.classList.add('lazy-load');
+    }
     imgElement.alt = img.alt;
-    imgElement.className = 'carousel-image';
+    imgElement.className += ' carousel-image';
     track.appendChild(imgElement);
   });
+
+  // Preload second image
+  setTimeout(() => {
+    const secondImg = track.querySelectorAll('img.lazy-load')[0];
+    if (secondImg) {
+      secondImg.src = secondImg.dataset.src;
+      secondImg.classList.remove('lazy-load');
+    }
+  }, 100);
 
   // Add text card as last slide
   const description = projectDescriptions[project];
@@ -292,14 +312,31 @@ function switchWholesaleProject(project) {
   // Clear and rebuild track
   track.innerHTML = '';
 
-  // Add images
-  images.forEach(img => {
+  // Add images with lazy loading
+  images.forEach((img, index) => {
     const imgElement = document.createElement('img');
-    imgElement.src = img.src;
+    if (index === 0) {
+      // First image loads immediately
+      imgElement.src = img.src;
+      imgElement.loading = 'eager';
+    } else {
+      // Other images lazy load
+      imgElement.dataset.src = img.src;
+      imgElement.classList.add('lazy-load');
+    }
     imgElement.alt = img.alt;
-    imgElement.className = 'carousel-image';
+    imgElement.className += ' carousel-image';
     track.appendChild(imgElement);
   });
+
+  // Preload second image
+  setTimeout(() => {
+    const secondImg = track.querySelectorAll('img.lazy-load')[0];
+    if (secondImg) {
+      secondImg.src = secondImg.dataset.src;
+      secondImg.classList.remove('lazy-load');
+    }
+  }, 100);
 
   // Add text card as last slide
   const description = wholesaleProjectDescriptions[project];
@@ -478,3 +515,99 @@ document.addEventListener('touchmove', function(e) {
     }
   }
 }, { passive: false });
+
+// Lazy Loading for Images
+function initLazyLoading() {
+  // Load images that are about to be shown or are adjacent to current slide
+  const lazyLoadImage = (img) => {
+    if (img.classList.contains('lazy-load') && img.dataset.src) {
+      img.src = img.dataset.src;
+      img.classList.remove('lazy-load');
+      img.classList.add('loaded');
+    }
+  };
+
+  // Preload adjacent images when carousel changes
+  const preloadAdjacentImages = (container, currentIndex) => {
+    const images = container.querySelectorAll('img.carousel-image');
+    const totalImages = images.length;
+
+    // Load current, next, and previous images
+    const indicesToLoad = [
+      currentIndex,
+      (currentIndex + 1) % totalImages,
+      (currentIndex - 1 + totalImages) % totalImages
+    ];
+
+    indicesToLoad.forEach(index => {
+      if (images[index]) {
+        lazyLoadImage(images[index]);
+      }
+    });
+  };
+
+  // Initial load - preload first 2 images of each visible carousel
+  document.querySelectorAll('.carousel-container').forEach(container => {
+    const images = container.querySelectorAll('img.carousel-image');
+    if (images.length > 0) {
+      lazyLoadImage(images[0]); // First image
+      if (images.length > 1) {
+        lazyLoadImage(images[1]); // Second image
+      }
+    }
+  });
+
+  // Attach to carousel movements
+  const originalMoveCarousel = window.moveCarousel;
+  window.moveCarousel = function(direction) {
+    if (typeof originalMoveCarousel === 'function') {
+      originalMoveCarousel(direction);
+    }
+    const container = document.querySelector('#page-3 .carousel-container');
+    if (container) {
+      preloadAdjacentImages(container, currentSlide);
+    }
+  };
+
+  const originalMoveWholesaleCarousel = window.moveWholesaleCarousel;
+  window.moveWholesaleCarousel = function(direction) {
+    if (typeof originalMoveWholesaleCarousel === 'function') {
+      originalMoveWholesaleCarousel(direction);
+    }
+    const container = document.querySelector('.wholesale-carousel');
+    if (container) {
+      preloadAdjacentImages(container, currentWholesaleSlide);
+    }
+  };
+
+  const originalMoveQuotingCarousel = window.moveQuotingCarousel;
+  window.moveQuotingCarousel = function(direction) {
+    if (typeof originalMoveQuotingCarousel === 'function') {
+      originalMoveQuotingCarousel(direction);
+    }
+    const container = document.querySelector('.quoting-carousel');
+    if (container) {
+      preloadAdjacentImages(container, currentQuotingSlide);
+    }
+  };
+}
+
+// Preload images when switching projects
+const originalSwitchProject = window.switchProject;
+window.switchProject = function(project) {
+  switchProject.apply(this, arguments);
+  // Preload first 2 images after switching
+  setTimeout(() => {
+    const container = document.querySelector('#page-3 .carousel-container');
+    const images = container?.querySelectorAll('img.carousel-image');
+    if (images && images.length > 0) {
+      [0, 1].forEach(i => {
+        if (images[i] && images[i].classList.contains('lazy-load') && images[i].dataset.src) {
+          images[i].src = images[i].dataset.src;
+          images[i].classList.remove('lazy-load');
+          images[i].classList.add('loaded');
+        }
+      });
+    }
+  }, 100);
+};
