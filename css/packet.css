@@ -558,7 +558,7 @@ body {
   /* Smaller padding on iPhone */
   body .page-container {
     padding: 10pt 14pt 20pt 14pt !important;
-    width: 92% !important;
+    width: 100% !important;
   }
 
   /* Even tighter spacing */
