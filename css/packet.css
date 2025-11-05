@@ -363,20 +363,30 @@ body {
     display: none !important;
   }
 
+  /* Show active page on top during normal state */
+  .page-container.active {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    z-index: 10;
+  }
+
   /* Enable page exit animation on mobile with adjusted timing */
   .page-container.page-exit {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    z-index: 20;
     animation: pageExitMobile 0.4s ease-in-out forwards !important;
   }
 
-  /* Mobile-optimized page exit animation */
+  /* Mobile-optimized page exit animation - slides off to reveal page beneath */
   @keyframes pageExitMobile {
     0% {
-      transform: translateX(0) scale(1);
-      opacity: 1;
+      transform: translateX(0);
     }
     100% {
-      transform: translateX(-100%) scale(0.95);
-      opacity: 0;
+      transform: translateX(-100%);
     }
   }
 

@@ -10,22 +10,36 @@ function showPage(pageId) {
 
   // If there's a current page and it's different from the new page
   if (currentPage && currentPage !== newPage) {
-    // First, make the new page active (it will be underneath)
-    newPage.classList.add('active');
-
-    // Then animate the current page sliding off
-    currentPage.classList.add('page-exit');
-    currentPage.classList.remove('active');
-
-    // Determine animation duration based on screen size
     const isMobile = window.innerWidth <= 768;
-    const animationDuration = isMobile ? 400 : 600;
 
-    // Wait for exit animation to complete, then clean up
-    setTimeout(() => {
-      currentPage.classList.remove('page-exit');
-      window.scrollTo(0, 0);
-    }, animationDuration);
+    if (isMobile) {
+      // Mobile: Show new page underneath first, then animate old page off
+      newPage.style.display = 'block';
+      newPage.classList.add('active');
+
+      // Small delay to ensure new page renders before animation starts
+      setTimeout(() => {
+        currentPage.classList.add('page-exit');
+        currentPage.classList.remove('active');
+      }, 10);
+
+      // Clean up after animation completes
+      setTimeout(() => {
+        currentPage.classList.remove('page-exit');
+        currentPage.style.display = '';
+        window.scrollTo(0, 0);
+      }, 410);
+    } else {
+      // Desktop: Original behavior
+      newPage.classList.add('active');
+      currentPage.classList.add('page-exit');
+      currentPage.classList.remove('active');
+
+      setTimeout(() => {
+        currentPage.classList.remove('page-exit');
+        window.scrollTo(0, 0);
+      }, 600);
+    }
   } else if (!currentPage) {
     // If no current page, just show the requested page
     newPage.classList.add('active');
