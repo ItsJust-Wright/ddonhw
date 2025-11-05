@@ -327,7 +327,7 @@ body {
 @media screen and (max-width: 768px) {
   /* Reset body background and ensure proper scrolling */
   html, body {
-    background: #f5f5f5;
+    background: #ffffff;
     overflow-x: hidden;
     width: 100%;
     margin: 0;
@@ -335,28 +335,27 @@ body {
   }
 
   body {
-    position: static;
+    position: static !important;
     min-height: 100vh;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding: 0 !important;
   }
 
-  /* Page containers - centered on mobile like desktop */
+  /* Page containers - full width, static positioning on mobile */
   body .page-container {
-    position: relative !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 90% !important;
+    position: static !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
     max-width: 100% !important;
     padding: 16pt 20pt 30pt 20pt !important;
-    margin: 0 auto 20px auto !important;
-    box-shadow: 0 0 10px rgba(0,0,0,0.08) !important;
-    min-height: auto !important;
-    background-color: #ffffff;
+    margin: 0 !important;
+    box-shadow: none !important;
+    min-height: 100vh !important;
+    background-color: #ffffff !important;
   }
 
   .page-container.active {
-    display: block;
+    display: block !important;
   }
 
   /* Hide non-active pages on mobile */
