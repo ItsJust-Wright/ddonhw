@@ -297,7 +297,7 @@ body {
 @media screen and (max-width: 768px) {
   /* Reset body background and ensure proper scrolling */
   html, body {
-    background: #ffffff;
+    background: #f5f5f5;
     overflow-x: hidden;
     width: 100%;
     margin: 0;
@@ -306,20 +306,23 @@ body {
 
   body {
     position: static;
-    min-height: auto;
+    min-height: 100vh;
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
 
-  /* Page containers - full width on mobile */
+  /* Page containers - centered on mobile like desktop */
   body .page-container {
     position: relative !important;
-    left: auto !important;
-    transform: none !important;
-    width: 100% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 90% !important;
     max-width: 100% !important;
     padding: 16pt 20pt 30pt 20pt !important;
-    margin: 0 !important;
-    box-shadow: none !important;
+    margin: 0 auto 20px auto !important;
+    box-shadow: 0 0 10px rgba(0,0,0,0.08) !important;
     min-height: auto !important;
+    background-color: #ffffff;
   }
 
   .page-container.active {
@@ -338,60 +341,61 @@ body {
 
   /* Header - reduce font sizes */
   h1.c18, .c18 {
-    font-size: 24pt !important;
-    text-align: center;
-    padding-bottom: 8pt !important;
+    font-size: 20pt !important;
+    text-align: left;
+    padding-bottom: 6pt !important;
   }
 
   .c17 {
-    font-size: 9pt !important;
+    font-size: 8.5pt !important;
     line-height: 1.4 !important;
-    text-align: center;
+    text-align: left;
   }
 
   .c7.c12, .c12 {
-    font-size: 9pt !important;
+    font-size: 8.5pt !important;
   }
 
   /* Section headings */
   h5.c3, .c3 {
-    font-size: 14pt !important;
-    padding-top: 8pt !important;
-    padding-bottom: 4pt !important;
+    font-size: 12pt !important;
+    padding-top: 6pt !important;
+    padding-bottom: 3pt !important;
   }
 
   /* Adjust font sizes for readability */
   .c10, .c15 {
-    font-size: 10pt !important;
+    font-size: 9pt !important;
   }
 
   .c7, .c4 {
-    font-size: 10pt !important;
+    font-size: 9pt !important;
   }
 
   /* Reduce padding on paragraphs */
   .c0 {
-    padding-top: 6pt !important;
-    padding-bottom: 6pt !important;
+    padding-top: 4pt !important;
+    padding-bottom: 4pt !important;
+    line-height: 1.25 !important;
   }
 
   .c16 {
-    margin: 3px 0 !important;
-    line-height: 1.35 !important;
+    margin: 2px 0 !important;
+    line-height: 1.3 !important;
   }
 
   /* Lists - tighter spacing */
   ul {
-    margin: 4px 0 6px 20px !important;
+    margin: 3px 0 5px 18px !important;
   }
 
   li {
-    margin: 3px 0 !important;
-    font-size: 10pt !important;
+    margin: 2px 0 !important;
+    font-size: 9pt !important;
   }
 
   li span {
-    line-height: 1.4 !important;
+    line-height: 1.35 !important;
   }
 
   /* Make links and bullets more touch-friendly */
@@ -524,33 +528,39 @@ body {
 @media screen and (max-width: 430px) {
   /* Smaller padding on iPhone */
   body .page-container {
-    padding: 12pt 16pt 24pt 16pt !important;
+    padding: 10pt 14pt 20pt 14pt !important;
+    width: 92% !important;
   }
 
   /* Even tighter spacing */
   h1.c18, .c18 {
-    font-size: 22pt !important;
+    font-size: 18pt !important;
   }
 
   .c17 {
-    font-size: 8.5pt !important;
+    font-size: 7.5pt !important;
   }
 
   h5.c3, .c3 {
-    font-size: 13pt !important;
+    font-size: 11pt !important;
+  }
+
+  .c10, .c15, .c7, .c4 {
+    font-size: 8.5pt !important;
   }
 
   .c0 {
-    padding-top: 5pt !important;
-    padding-bottom: 5pt !important;
+    padding-top: 3pt !important;
+    padding-bottom: 3pt !important;
   }
 
   ul {
-    margin: 3px 0 5px 18px !important;
+    margin: 2px 0 4px 16px !important;
   }
 
   li {
-    font-size: 9.5pt !important;
+    font-size: 8.5pt !important;
+    margin: 1px 0 !important;
   }
 
   /* Carousel controls */
