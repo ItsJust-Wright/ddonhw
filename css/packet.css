@@ -358,14 +358,26 @@ body {
     display: block !important;
   }
 
-  /* Hide non-active pages on mobile */
-  .page-container:not(.active) {
+  /* Hide non-active pages on mobile (but not during animation) */
+  .page-container:not(.active):not(.page-exit) {
     display: none !important;
   }
 
-  /* Disable page exit animation on mobile */
+  /* Enable page exit animation on mobile with adjusted timing */
   .page-container.page-exit {
-    animation: none !important;
+    animation: pageExitMobile 0.4s ease-in-out forwards !important;
+  }
+
+  /* Mobile-optimized page exit animation */
+  @keyframes pageExitMobile {
+    0% {
+      transform: translateX(0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(-100%) scale(0.95);
+      opacity: 0;
+    }
   }
 
   /* Header - reduce font sizes */

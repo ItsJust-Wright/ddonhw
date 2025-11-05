@@ -17,11 +17,15 @@ function showPage(pageId) {
     currentPage.classList.add('page-exit');
     currentPage.classList.remove('active');
 
+    // Determine animation duration based on screen size
+    const isMobile = window.innerWidth <= 768;
+    const animationDuration = isMobile ? 400 : 600;
+
     // Wait for exit animation to complete, then clean up
     setTimeout(() => {
       currentPage.classList.remove('page-exit');
       window.scrollTo(0, 0);
-    }, 600); // Match the exit animation duration
+    }, animationDuration);
   } else if (!currentPage) {
     // If no current page, just show the requested page
     newPage.classList.add('active');
@@ -49,6 +53,30 @@ function nextPage() {
     showPage('home');
   } else {
     const pageNum = nextPageId.replace('page-', '');
+    showPage(pageNum);
+  }
+}
+
+// Get the previous page in sequence
+function getPreviousPage() {
+  const currentPage = document.querySelector('.page-container.active');
+  const currentId = currentPage.id;
+
+  // Define page order: home -> page-1 -> page-2 -> ... -> page-8 -> home
+  const pageOrder = ['home-page', 'page-1', 'page-2', 'page-3', 'page-4', 'page-5', 'page-6', 'page-7', 'page-8'];
+  const currentIndex = pageOrder.indexOf(currentId);
+  const prevIndex = (currentIndex - 1 + pageOrder.length) % pageOrder.length;
+
+  return pageOrder[prevIndex];
+}
+
+// Navigate to previous page
+function previousPage() {
+  const prevPageId = getPreviousPage();
+  if (prevPageId === 'home-page') {
+    showPage('home');
+  } else {
+    const pageNum = prevPageId.replace('page-', '');
     showPage(pageNum);
   }
 }
@@ -85,6 +113,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Add touch/swipe support for all carousels
   addSwipeSupport();
+
+  // Add page swipe navigation for mobile
+  addPageSwipeSupport();
 
   // Initialize lazy loading for images
   initLazyLoading();
@@ -515,6 +546,52 @@ document.addEventListener('touchmove', function(e) {
     }
   }
 }, { passive: false });
+
+// Page swipe navigation for mobile
+function addPageSwipeSupport() {
+  // Only add on mobile devices (screen width <= 768px)
+  if (window.innerWidth > 768) return;
+
+  const body = document.body;
+  let touchStartX = 0;
+  let touchEndX = 0;
+  let touchStartY = 0;
+  let touchEndY = 0;
+  const minSwipeDistance = 75; // Minimum distance for a page swipe (higher than carousel to avoid conflicts)
+
+  body.addEventListener('touchstart', function(e) {
+    // Don't trigger page swipe if touching a carousel
+    if (e.target.closest('.carousel-container')) return;
+
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  body.addEventListener('touchend', function(e) {
+    // Don't trigger page swipe if touching a carousel
+    if (e.target.closest('.carousel-container')) return;
+
+    touchEndX = e.changedTouches[0].screenX;
+    touchEndY = e.changedTouches[0].screenY;
+    handlePageSwipe();
+  }, { passive: true });
+
+  function handlePageSwipe() {
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+
+    // Check if horizontal swipe is greater than vertical (to avoid interfering with scrolling)
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+      if (deltaX < 0) {
+        // Swipe left - next page
+        nextPage();
+      } else {
+        // Swipe right - previous page
+        previousPage();
+      }
+    }
+  }
+}
 
 // Lazy Loading Helper Functions
 function lazyLoadImage(img) {
