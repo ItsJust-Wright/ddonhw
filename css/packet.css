@@ -370,8 +370,10 @@ body {
   .page-container.active {
     position: fixed !important;
     top: 15px;
-    left: 50%;
-    transform: translateX(-50%) scale(0.55) !important;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    transform: scale(0.55) !important;
     transform-origin: top center;
     z-index: 10;
   }
@@ -380,7 +382,9 @@ body {
   .page-container.page-exit {
     position: fixed !important;
     top: 15px;
-    left: 50%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
     transform-origin: top center;
     z-index: 20;
   }
@@ -403,30 +407,30 @@ body {
   /* Forward swipe animation - slides left off screen while maintaining scale */
   @keyframes pageExitLeft {
     0% {
-      transform: translateX(-50%) scale(0.55);
+      transform: translateX(0) scale(0.55);
     }
     100% {
-      transform: translateX(-150%) scale(0.55);
+      transform: translateX(-100%) scale(0.55);
     }
   }
 
   /* Backward swipe animation - slides right off screen while maintaining scale */
   @keyframes pageExitRight {
     0% {
-      transform: translateX(-50%) scale(0.55);
+      transform: translateX(0) scale(0.55);
     }
     100% {
-      transform: translateX(50%) scale(0.55);
+      transform: translateX(100%) scale(0.55);
     }
   }
 
   /* Page entering from left - starts off-screen left, slides into view with scale */
   @keyframes pageEnterLeft {
     0% {
-      transform: translateX(-150%) scale(0.55);
+      transform: translateX(-100%) scale(0.55);
     }
     100% {
-      transform: translateX(-50%) scale(0.55);
+      transform: translateX(0) scale(0.55);
     }
   }
 
@@ -451,7 +455,7 @@ body {
   }
 
   .page-container.active {
-    transform: translateX(-50%) scale(0.48) !important;
+    transform: scale(0.48) !important;
     top: 10px;
   }
 
@@ -462,28 +466,28 @@ body {
   /* Update animations for smaller scale */
   @keyframes pageExitLeft {
     0% {
-      transform: translateX(-50%) scale(0.48);
+      transform: translateX(0) scale(0.48);
     }
     100% {
-      transform: translateX(-150%) scale(0.48);
+      transform: translateX(-100%) scale(0.48);
     }
   }
 
   @keyframes pageExitRight {
     0% {
-      transform: translateX(-50%) scale(0.48);
+      transform: translateX(0) scale(0.48);
     }
     100% {
-      transform: translateX(50%) scale(0.48);
+      transform: translateX(100%) scale(0.48);
     }
   }
 
   @keyframes pageEnterLeft {
     0% {
-      transform: translateX(-150%) scale(0.48);
+      transform: translateX(-100%) scale(0.48);
     }
     100% {
-      transform: translateX(-50%) scale(0.48);
+      transform: translateX(0) scale(0.48);
     }
   }
 }
