@@ -595,7 +595,25 @@ document.addEventListener('touchmove', function(e) {
   }
 }, { passive: false });
 
-// Page swipe navigation for mobile with refined gestures
+// Haptic feedback helper
+function triggerHaptic(style = 'light') {
+  if ('vibrate' in navigator) {
+    // Fallback vibration for Android
+    const patterns = {
+      light: 10,
+      medium: 20,
+      heavy: 30
+    };
+    navigator.vibrate(patterns[style] || 10);
+  }
+
+  // iOS Haptic Feedback (if available)
+  if (window.navigator && window.navigator.vibrate) {
+    window.navigator.vibrate(10);
+  }
+}
+
+// Page swipe navigation for mobile with refined gestures and haptics
 function addPageSwipeSupport() {
   // Only add on mobile devices
   if (window.innerWidth > 768) return;
@@ -605,11 +623,13 @@ function addPageSwipeSupport() {
   let touchStartY = 0;
   let touchCurrentX = 0;
   let touchCurrentY = 0;
+  let touchStartTime = 0;
   let isSwiping = false;
   let swipeDirection = null;
-  const minSwipeDistance = 60; // Reduced for easier triggering
-  const swipeThreshold = 20; // Lower threshold to detect intent faster
-  const velocityThreshold = 0.3; // Minimum velocity for quick swipes
+  let hasTriggeredHaptic = false;
+  const minSwipeDistance = 50; // Easier triggering
+  const swipeThreshold = 15; // Very low threshold for instant feedback
+  const velocityThreshold = 0.4; // Minimum velocity for quick swipes
 
   body.addEventListener('touchstart', function(e) {
     // Don't trigger page swipe if touching a carousel or interactive element
@@ -619,8 +639,10 @@ function addPageSwipeSupport() {
     touchStartY = e.touches[0].clientY;
     touchCurrentX = touchStartX;
     touchCurrentY = touchStartY;
+    touchStartTime = Date.now();
     isSwiping = false;
     swipeDirection = null;
+    hasTriggeredHaptic = false;
   }, { passive: true });
 
   body.addEventListener('touchmove', function(e) {
@@ -637,33 +659,45 @@ function addPageSwipeSupport() {
       isSwiping = true;
       swipeDirection = deltaX > 0 ? 'right' : 'left';
 
+      // Trigger light haptic feedback when swipe starts
+      if (!hasTriggeredHaptic) {
+        triggerHaptic('light');
+        hasTriggeredHaptic = true;
+      }
+
       // Prevent scrolling during horizontal swipe
       e.preventDefault();
 
-      // Add visual feedback with smoother movement
+      // Add visual feedback with ultra-smooth movement
       const activePage = document.querySelector('.page-container.active');
       if (activePage) {
-        // Progressive resistance - more drag near edges
-        const screenWidth = window.innerWidth;
-        const dragRatio = Math.min(Math.abs(deltaX) / screenWidth, 0.4);
-        const resistance = 1 - (dragRatio * 0.5);
-        const dragAmount = deltaX * resistance * 0.6;
+        // Use requestAnimationFrame for 60fps smoothness
+        requestAnimationFrame(() => {
+          // Exponential resistance curve for natural feel
+          const screenWidth = window.innerWidth;
+          const progress = Math.abs(deltaX) / screenWidth;
+          const resistance = 1 - Math.pow(progress, 1.5) * 0.6;
+          const dragAmount = deltaX * resistance * 0.7;
 
-        activePage.style.transition = 'none';
-        activePage.style.transform = `translateX(${dragAmount}px)`;
+          activePage.style.transition = 'none';
+          activePage.style.transform = `translateX(${dragAmount}px)`;
+          activePage.style.willChange = 'transform';
+        });
       }
     } else if (isSwiping) {
       e.preventDefault();
 
-      // Continue updating visual feedback with resistance
+      // Continue updating visual feedback with buttery smooth animation
       const activePage = document.querySelector('.page-container.active');
       if (activePage) {
-        const screenWidth = window.innerWidth;
-        const dragRatio = Math.min(Math.abs(deltaX) / screenWidth, 0.4);
-        const resistance = 1 - (dragRatio * 0.5);
-        const dragAmount = deltaX * resistance * 0.6;
+        requestAnimationFrame(() => {
+          const screenWidth = window.innerWidth;
+          const progress = Math.abs(deltaX) / screenWidth;
+          const resistance = 1 - Math.pow(progress, 1.5) * 0.6;
+          const dragAmount = deltaX * resistance * 0.7;
 
-        activePage.style.transform = `translateX(${dragAmount}px)`;
+          activePage.style.transform = `translateX(${dragAmount}px)`;
+        });
       }
     }
   }, { passive: false });
@@ -677,30 +711,37 @@ function addPageSwipeSupport() {
       if (activePage) {
         activePage.style.transition = '';
         activePage.style.transform = '';
+        activePage.style.willChange = '';
       }
       return;
     }
 
     const deltaX = touchCurrentX - touchStartX;
     const deltaY = touchCurrentY - touchStartY;
+    const swipeTime = Date.now() - touchStartTime;
 
-    // Calculate swipe velocity (distance per millisecond would be more accurate, but this works)
-    const swipeVelocity = Math.abs(deltaX) / 100;
+    // Calculate actual velocity (pixels per millisecond)
+    const velocity = Math.abs(deltaX) / swipeTime;
 
     // Check if swipe was long enough OR fast enough, and predominantly horizontal
     const isLongSwipe = Math.abs(deltaX) > minSwipeDistance;
-    const isFastSwipe = swipeVelocity > velocityThreshold && Math.abs(deltaX) > 30;
+    const isFastSwipe = velocity > velocityThreshold && Math.abs(deltaX) > 30;
     const isHorizontal = Math.abs(deltaX) > Math.abs(deltaY) * 1.2;
 
     if ((isLongSwipe || isFastSwipe) && isHorizontal) {
-      // Animate the current page out smoothly
+      // Trigger medium haptic feedback on successful swipe
+      triggerHaptic('medium');
+
+      // Animate the current page out with momentum-based timing
       if (activePage) {
-        activePage.style.transition = 'transform 0.2s ease-out';
+        // Faster swipes = faster animation
+        const animationDuration = Math.max(0.15, Math.min(0.3, 0.3 - velocity * 0.2));
+        activePage.style.transition = `transform ${animationDuration}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
         const exitDirection = deltaX < 0 ? '-100%' : '100%';
         activePage.style.transform = `translateX(${exitDirection})`;
       }
 
-      // Small delay before navigation for smooth transition
+      // Navigate with minimal delay for ultra-smooth feel
       setTimeout(() => {
         if (deltaX < 0) {
           // Swipe left - next page
@@ -714,18 +755,20 @@ function addPageSwipeSupport() {
         if (activePage) {
           activePage.style.transition = '';
           activePage.style.transform = '';
+          activePage.style.willChange = '';
         }
-      }, 100);
+      }, 50);
     } else {
-      // Snap back to original position
+      // Snap back to original position with elastic ease
       if (activePage) {
-        activePage.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)';
+        activePage.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)';
         activePage.style.transform = 'translateX(0)';
 
         setTimeout(() => {
           activePage.style.transition = '';
           activePage.style.transform = '';
-        }, 300);
+          activePage.style.willChange = '';
+        }, 350);
       }
     }
 
@@ -743,6 +786,7 @@ function addPageSwipeSupport() {
       setTimeout(() => {
         activePage.style.transition = '';
         activePage.style.transform = '';
+        activePage.style.willChange = '';
       }, 300);
     }
     isSwiping = false;
