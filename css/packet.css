@@ -327,8 +327,9 @@ body {
 @media screen and (max-width: 768px) {
   /* Reset body background and ensure proper scrolling */
   html, body {
-    background: #f5f5f5;
+    background: #f0f0f0;
     overflow-x: hidden;
+    overflow-y: auto;
     width: 100%;
     margin: 0;
     padding: 0;
@@ -337,20 +338,22 @@ body {
   body {
     position: relative !important;
     min-height: 100vh;
-    padding: 20px 10px !important;
+    padding: 15px !important;
   }
 
-  /* Page containers - maintain document proportions on mobile */
+  /* Page containers - scale down entire document to fit mobile */
   body .page-container {
     position: static !important;
     left: auto !important;
-    transform: none !important;
-    width: 100% !important;
+    transform: scale(0.55) !important;
+    transform-origin: top center !important;
+    width: 468pt !important;
     max-width: 468pt !important;
-    padding: 22pt 30pt 50pt 30pt !important;
+    padding: 22pt 55pt 50pt 55pt !important;
     margin: 0 auto !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-    min-height: auto !important;
+    margin-bottom: -350px !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15) !important;
+    min-height: 725pt !important;
     background-color: #ffffff !important;
   }
 
@@ -366,20 +369,19 @@ body {
   /* Show active page on top during normal state */
   .page-container.active {
     position: fixed !important;
-    top: 20px;
-    left: 10px;
-    right: 10px;
-    margin: 0 auto;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.55) !important;
+    transform-origin: top center;
     z-index: 10;
   }
 
   /* Enable page exit animation on mobile with adjusted timing */
   .page-container.page-exit {
     position: fixed !important;
-    top: 20px;
-    left: 10px;
-    right: 10px;
-    margin: 0 auto;
+    top: 15px;
+    left: 50%;
+    transform-origin: top center;
     z-index: 20;
   }
 
@@ -398,217 +400,40 @@ body {
     animation: pageEnterLeft 0.4s ease-in-out forwards !important;
   }
 
-  /* Forward swipe animation - slides left off screen */
+  /* Forward swipe animation - slides left off screen while maintaining scale */
   @keyframes pageExitLeft {
     0% {
-      transform: translateX(0);
+      transform: translateX(-50%) scale(0.55);
     }
     100% {
-      transform: translateX(-100%);
+      transform: translateX(-150%) scale(0.55);
     }
   }
 
-  /* Backward swipe animation - slides right off screen */
+  /* Backward swipe animation - slides right off screen while maintaining scale */
   @keyframes pageExitRight {
     0% {
-      transform: translateX(0);
+      transform: translateX(-50%) scale(0.55);
     }
     100% {
-      transform: translateX(100%);
+      transform: translateX(50%) scale(0.55);
     }
   }
 
-  /* Page entering from left - starts off-screen left, slides into view */
+  /* Page entering from left - starts off-screen left, slides into view with scale */
   @keyframes pageEnterLeft {
     0% {
-      transform: translateX(-100%);
+      transform: translateX(-150%) scale(0.55);
     }
     100% {
-      transform: translateX(0);
+      transform: translateX(-50%) scale(0.55);
     }
   }
 
-  /* Header - reduce font sizes */
-  h1.c18, .c18 {
-    font-size: 20pt !important;
-    text-align: left;
-    padding-bottom: 6pt !important;
-  }
+  /* Keep original fonts and layout - entire document is scaled */
 
-  .c17 {
-    font-size: 8.5pt !important;
-    line-height: 1.4 !important;
-    text-align: left;
-  }
-
-  .c7.c12, .c12 {
-    font-size: 8.5pt !important;
-  }
-
-  /* Section headings */
-  h5.c3, .c3 {
-    font-size: 12pt !important;
-    padding-top: 6pt !important;
-    padding-bottom: 3pt !important;
-  }
-
-  /* Adjust font sizes for readability */
-  .c10, .c15 {
-    font-size: 9pt !important;
-  }
-
-  .c7, .c4 {
-    font-size: 9pt !important;
-  }
-
-  /* Reduce padding on paragraphs */
-  .c0 {
-    padding-top: 4pt !important;
-    padding-bottom: 4pt !important;
-    line-height: 1.25 !important;
-  }
-
-  .c16 {
-    margin: 2px 0 !important;
-    line-height: 1.3 !important;
-  }
-
-  /* Lists - tighter spacing */
-  ul {
-    margin: 3px 0 5px 18px !important;
-  }
-
-  li {
-    margin: 2px 0 !important;
-    font-size: 9pt !important;
-  }
-
-  li span {
-    line-height: 1.35 !important;
-  }
-
-  /* Make links and bullets more touch-friendly */
-  li {
-    padding: 4px 0;
-    cursor: pointer;
-  }
-
-  a {
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
-  }
-
-  /* Go Home button - larger for touch */
-  .go-home-btn {
-    width: 100%;
-    padding: 14px 20px;
-    font-size: 14pt;
-    margin-top: 24px;
-    border-radius: 8px;
-    box-sizing: border-box;
-  }
-
-  /* Project Tabs - stack or scroll on small screens */
-  .project-tabs {
-    width: 100%;
-    max-width: 100%;
-    margin: 16px 0 0 0;
-    gap: 0;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .project-tab {
-    font-size: 12px;
-    padding: 12px 16px;
-    white-space: nowrap;
-    min-width: fit-content;
-  }
-
-  /* Carousel - full width on mobile */
-  .carousel-container {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    aspect-ratio: 1 / 1;
-    margin: 16px 0;
-    border-radius: 12px;
-  }
-
-  .carousel-track {
-    height: 100%;
-  }
-
-  .carousel-image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-
-  /* Carousel text card */
-  .carousel-text-card {
-    width: 100%;
-    height: 100%;
-    padding: 30px 20px;
-  }
-
-  .carousel-card-title {
-    font-size: 22px;
-    margin-bottom: 16px;
-  }
-
-  .carousel-card-text {
-    font-size: 15px;
-    max-width: 100%;
-  }
-
-  /* Carousel buttons - larger touch targets */
-  .carousel-btn {
-    font-size: 28px;
-    padding: 12px 16px;
-    background-color: rgba(255, 255, 255, 0.9);
-  }
-
-  .carousel-prev {
-    left: 8px;
-  }
-
-  .carousel-next {
-    right: 8px;
-  }
-
-  /* Carousel indicators - larger for touch */
-  .carousel-indicators {
-    bottom: 12px;
-    gap: 10px;
-  }
-
-  .carousel-dot {
-    width: 12px;
-    height: 12px;
-  }
-
-  /* Page curl - hidden on mobile (not needed) */
+  /* Page curl - hidden on mobile (not needed with swipe) */
   .page-curl {
-    display: none;
-  }
-
-  /* Ensure right-aligned items don't overflow */
-  .c21 {
-    float: none !important;
-    display: inline !important;
-    margin-left: 0 !important;
-  }
-
-  /* Education section - stack location/date */
-  .c16:nth-of-type(1) .c21,
-  .c16:nth-of-type(2) .c21 {
-    float: none !important;
-    display: block !important;
-    margin-top: 4px;
-  }
-
-  .c16:nth-of-type(1)::after,
-  .c16:nth-of-type(2)::after {
     display: none;
   }
 }
@@ -616,71 +441,50 @@ body {
 /* iPhone specific optimizations */
 @media screen and (max-width: 430px) {
   body {
-    padding: 10px 5px !important;
+    padding: 10px !important;
   }
 
-  /* Smaller padding on iPhone but maintain document structure */
+  /* Slightly smaller scale for iPhone */
   body .page-container {
-    padding: 16pt 20pt 30pt 20pt !important;
-    width: 100% !important;
-    max-width: 468pt !important;
+    transform: scale(0.48) !important;
+    margin-bottom: -400px !important;
   }
 
   .page-container.active {
+    transform: translateX(-50%) scale(0.48) !important;
     top: 10px;
-    left: 5px;
-    right: 5px;
   }
 
   .page-container.page-exit {
     top: 10px;
-    left: 5px;
-    right: 5px;
   }
 
-  /* Even tighter spacing */
-  h1.c18, .c18 {
-    font-size: 18pt !important;
+  /* Update animations for smaller scale */
+  @keyframes pageExitLeft {
+    0% {
+      transform: translateX(-50%) scale(0.48);
+    }
+    100% {
+      transform: translateX(-150%) scale(0.48);
+    }
   }
 
-  .c17 {
-    font-size: 7.5pt !important;
+  @keyframes pageExitRight {
+    0% {
+      transform: translateX(-50%) scale(0.48);
+    }
+    100% {
+      transform: translateX(50%) scale(0.48);
+    }
   }
 
-  h5.c3, .c3 {
-    font-size: 11pt !important;
-  }
-
-  .c10, .c15, .c7, .c4 {
-    font-size: 8.5pt !important;
-  }
-
-  .c0 {
-    padding-top: 3pt !important;
-    padding-bottom: 3pt !important;
-  }
-
-  ul {
-    margin: 2px 0 4px 16px !important;
-  }
-
-  li {
-    font-size: 8.5pt !important;
-    margin: 1px 0 !important;
-  }
-
-  /* Carousel controls */
-  .carousel-btn {
-    font-size: 24px;
-    padding: 10px 12px;
-  }
-
-  .carousel-prev {
-    left: 4px;
-  }
-
-  .carousel-next {
-    right: 4px;
+  @keyframes pageEnterLeft {
+    0% {
+      transform: translateX(-150%) scale(0.48);
+    }
+    100% {
+      transform: translateX(-50%) scale(0.48);
+    }
   }
 }
 
