@@ -1,5 +1,5 @@
 // Page navigation system
-function showPage(pageId) {
+function showPage(pageId, direction = 'forward') {
   // Get current active page
   const currentPage = document.querySelector('.page-container.active');
 
@@ -13,6 +13,15 @@ function showPage(pageId) {
     const isMobile = window.innerWidth <= 768;
 
     if (isMobile) {
+      // Set animation direction class
+      if (direction === 'backward') {
+        currentPage.setAttribute('data-exit-direction', 'right');
+        newPage.setAttribute('data-enter-direction', 'left');
+      } else {
+        currentPage.setAttribute('data-exit-direction', 'left');
+        newPage.setAttribute('data-enter-direction', 'right');
+      }
+
       // Mobile: Show new page underneath first, then animate old page off
       newPage.style.display = 'block';
       newPage.classList.add('active');
@@ -26,6 +35,8 @@ function showPage(pageId) {
       // Clean up after animation completes
       setTimeout(() => {
         currentPage.classList.remove('page-exit');
+        currentPage.removeAttribute('data-exit-direction');
+        newPage.removeAttribute('data-enter-direction');
         currentPage.style.display = '';
         window.scrollTo(0, 0);
       }, 410);
@@ -88,10 +99,10 @@ function getPreviousPage() {
 function previousPage() {
   const prevPageId = getPreviousPage();
   if (prevPageId === 'home-page') {
-    showPage('home');
+    showPage('home', 'backward');
   } else {
     const pageNum = prevPageId.replace('page-', '');
-    showPage(pageNum);
+    showPage(pageNum, 'backward');
   }
 }
 

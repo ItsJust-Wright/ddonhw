@@ -377,16 +377,50 @@ body {
     top: 0;
     left: 0;
     z-index: 20;
-    animation: pageExitMobile 0.4s ease-in-out forwards !important;
   }
 
-  /* Mobile-optimized page exit animation - slides off to reveal page beneath */
-  @keyframes pageExitMobile {
+  /* Forward swipe: slide left */
+  .page-container.page-exit[data-exit-direction="left"] {
+    animation: pageExitLeft 0.4s ease-in-out forwards !important;
+  }
+
+  /* Backward swipe: slide right */
+  .page-container.page-exit[data-exit-direction="right"] {
+    animation: pageExitRight 0.4s ease-in-out forwards !important;
+  }
+
+  /* New page entering from left (backward navigation) */
+  .page-container.active[data-enter-direction="left"] {
+    animation: pageEnterLeft 0.4s ease-in-out forwards !important;
+  }
+
+  /* Forward swipe animation - slides left off screen */
+  @keyframes pageExitLeft {
     0% {
       transform: translateX(0);
     }
     100% {
       transform: translateX(-100%);
+    }
+  }
+
+  /* Backward swipe animation - slides right off screen */
+  @keyframes pageExitRight {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Page entering from left - starts off-screen left, slides into view */
+  @keyframes pageEnterLeft {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
     }
   }
 
