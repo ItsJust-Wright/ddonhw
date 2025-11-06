@@ -327,7 +327,7 @@ body {
 @media screen and (max-width: 768px) {
   /* Reset body background and ensure proper scrolling */
   html, body {
-    background: #ffffff;
+    background: #f5f5f5;
     overflow-x: hidden;
     width: 100%;
     margin: 0;
@@ -335,22 +335,22 @@ body {
   }
 
   body {
-    position: static !important;
+    position: relative !important;
     min-height: 100vh;
-    padding: 0 !important;
+    padding: 20px 10px !important;
   }
 
-  /* Page containers - full width, static positioning on mobile */
+  /* Page containers - maintain document proportions on mobile */
   body .page-container {
     position: static !important;
     left: auto !important;
     transform: none !important;
     width: 100% !important;
-    max-width: 100% !important;
-    padding: 16pt 20pt 30pt 20pt !important;
-    margin: 0 !important;
-    box-shadow: none !important;
-    min-height: 100vh !important;
+    max-width: 468pt !important;
+    padding: 22pt 30pt 50pt 30pt !important;
+    margin: 0 auto !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    min-height: auto !important;
     background-color: #ffffff !important;
   }
 
@@ -366,16 +366,20 @@ body {
   /* Show active page on top during normal state */
   .page-container.active {
     position: fixed !important;
-    top: 0;
-    left: 0;
+    top: 20px;
+    left: 10px;
+    right: 10px;
+    margin: 0 auto;
     z-index: 10;
   }
 
   /* Enable page exit animation on mobile with adjusted timing */
   .page-container.page-exit {
     position: fixed !important;
-    top: 0;
-    left: 0;
+    top: 20px;
+    left: 10px;
+    right: 10px;
+    margin: 0 auto;
     z-index: 20;
   }
 
@@ -611,10 +615,27 @@ body {
 
 /* iPhone specific optimizations */
 @media screen and (max-width: 430px) {
-  /* Smaller padding on iPhone */
+  body {
+    padding: 10px 5px !important;
+  }
+
+  /* Smaller padding on iPhone but maintain document structure */
   body .page-container {
-    padding: 10pt 14pt 20pt 14pt !important;
+    padding: 16pt 20pt 30pt 20pt !important;
     width: 100% !important;
+    max-width: 468pt !important;
+  }
+
+  .page-container.active {
+    top: 10px;
+    left: 5px;
+    right: 5px;
+  }
+
+  .page-container.page-exit {
+    top: 10px;
+    left: 5px;
+    right: 5px;
   }
 
   /* Even tighter spacing */
