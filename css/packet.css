@@ -363,10 +363,10 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     padding: 20px !important;
     margin: 0 !important;
     box-shadow: none !important;
-    min-height: 100vh !important;
+    min-height: auto !important;
     background-color: #ffffff !important;
     box-sizing: border-box;
-    overflow-y: auto !important;
+    overflow-y: scroll !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
   }

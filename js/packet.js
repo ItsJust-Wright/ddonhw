@@ -597,19 +597,36 @@ document.addEventListener('touchmove', function(e) {
 
 // Haptic feedback helper
 function triggerHaptic(style = 'light') {
-  if ('vibrate' in navigator) {
-    // Fallback vibration for Android
+  try {
+    // Define vibration patterns
     const patterns = {
       light: 10,
-      medium: 20,
-      heavy: 30
+      medium: 25,
+      heavy: 50
     };
-    navigator.vibrate(patterns[style] || 10);
-  }
 
-  // iOS Haptic Feedback (if available)
-  if (window.navigator && window.navigator.vibrate) {
-    window.navigator.vibrate(10);
+    const duration = patterns[style] || 10;
+
+    // Try vibrate API (works on most Android and some iOS)
+    if (navigator.vibrate) {
+      navigator.vibrate(duration);
+      return;
+    }
+
+    // Fallback for older browsers
+    if (navigator.webkitVibrate) {
+      navigator.webkitVibrate(duration);
+      return;
+    }
+
+    // iOS 13+ Haptic Engine (via webkit)
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.haptic) {
+      window.webkit.messageHandlers.haptic.postMessage(style);
+      return;
+    }
+  } catch (e) {
+    // Silently fail if vibration not supported
+    console.log('Haptic feedback not supported on this device');
   }
 }
 
@@ -654,8 +671,8 @@ function addPageSwipeSupport() {
     const deltaX = touchCurrentX - touchStartX;
     const deltaY = touchCurrentY - touchStartY;
 
-    // Determine if this is a horizontal swipe
-    if (!isSwiping && Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+    // Determine if this is a horizontal swipe (must be 2x more horizontal than vertical)
+    if (!isSwiping && Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY) * 2) {
       isSwiping = true;
       swipeDirection = deltaX > 0 ? 'right' : 'left';
 
