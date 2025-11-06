@@ -595,7 +595,7 @@ document.addEventListener('touchmove', function(e) {
   }
 }, { passive: false });
 
-// Page swipe navigation for mobile with real-time tracking
+// Page swipe navigation for mobile with refined gestures
 function addPageSwipeSupport() {
   // Only add on mobile devices
   if (window.innerWidth > 768) return;
@@ -607,12 +607,13 @@ function addPageSwipeSupport() {
   let touchCurrentY = 0;
   let isSwiping = false;
   let swipeDirection = null;
-  const minSwipeDistance = 75;
-  const swipeThreshold = 30; // How far user needs to move before we consider it a swipe
+  const minSwipeDistance = 60; // Reduced for easier triggering
+  const swipeThreshold = 20; // Lower threshold to detect intent faster
+  const velocityThreshold = 0.3; // Minimum velocity for quick swipes
 
   body.addEventListener('touchstart', function(e) {
     // Don't trigger page swipe if touching a carousel or interactive element
-    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a')) return;
+    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a, button')) return;
 
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
@@ -623,7 +624,7 @@ function addPageSwipeSupport() {
   }, { passive: true });
 
   body.addEventListener('touchmove', function(e) {
-    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a')) return;
+    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a, button')) return;
 
     touchCurrentX = e.touches[0].clientX;
     touchCurrentY = e.touches[0].clientY;
@@ -632,58 +633,99 @@ function addPageSwipeSupport() {
     const deltaY = touchCurrentY - touchStartY;
 
     // Determine if this is a horizontal swipe
-    if (!isSwiping && Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY)) {
+    if (!isSwiping && Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
       isSwiping = true;
       swipeDirection = deltaX > 0 ? 'right' : 'left';
-      
+
       // Prevent scrolling during horizontal swipe
       e.preventDefault();
-      
-      // Add visual feedback - slight movement of the page
+
+      // Add visual feedback with smoother movement
       const activePage = document.querySelector('.page-container.active');
       if (activePage) {
-        // Limit the drag to 30% of screen width for a rubber-band effect
-        const maxDrag = window.innerWidth * 0.3;
-        const dragAmount = Math.max(-maxDrag, Math.min(maxDrag, deltaX * 0.5));
+        // Progressive resistance - more drag near edges
+        const screenWidth = window.innerWidth;
+        const dragRatio = Math.min(Math.abs(deltaX) / screenWidth, 0.4);
+        const resistance = 1 - (dragRatio * 0.5);
+        const dragAmount = deltaX * resistance * 0.6;
+
         activePage.style.transition = 'none';
         activePage.style.transform = `translateX(${dragAmount}px)`;
       }
     } else if (isSwiping) {
       e.preventDefault();
-      
-      // Continue updating visual feedback
+
+      // Continue updating visual feedback with resistance
       const activePage = document.querySelector('.page-container.active');
       if (activePage) {
-        const maxDrag = window.innerWidth * 0.3;
-        const dragAmount = Math.max(-maxDrag, Math.min(maxDrag, deltaX * 0.5));
+        const screenWidth = window.innerWidth;
+        const dragRatio = Math.min(Math.abs(deltaX) / screenWidth, 0.4);
+        const resistance = 1 - (dragRatio * 0.5);
+        const dragAmount = deltaX * resistance * 0.6;
+
         activePage.style.transform = `translateX(${dragAmount}px)`;
       }
     }
   }, { passive: false });
 
   body.addEventListener('touchend', function(e) {
-    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a')) return;
+    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a, button')) return;
 
-    // Reset visual feedback
     const activePage = document.querySelector('.page-container.active');
-    if (activePage) {
-      activePage.style.transition = '';
-      activePage.style.transform = '';
-    }
 
-    if (!isSwiping) return;
+    if (!isSwiping) {
+      if (activePage) {
+        activePage.style.transition = '';
+        activePage.style.transform = '';
+      }
+      return;
+    }
 
     const deltaX = touchCurrentX - touchStartX;
     const deltaY = touchCurrentY - touchStartY;
 
-    // Check if swipe was long enough and predominantly horizontal
-    if (Math.abs(deltaX) > minSwipeDistance && Math.abs(deltaX) > Math.abs(deltaY)) {
-      if (deltaX < 0) {
-        // Swipe left - next page
-        nextPage();
-      } else {
-        // Swipe right - previous page
-        previousPage();
+    // Calculate swipe velocity (distance per millisecond would be more accurate, but this works)
+    const swipeVelocity = Math.abs(deltaX) / 100;
+
+    // Check if swipe was long enough OR fast enough, and predominantly horizontal
+    const isLongSwipe = Math.abs(deltaX) > minSwipeDistance;
+    const isFastSwipe = swipeVelocity > velocityThreshold && Math.abs(deltaX) > 30;
+    const isHorizontal = Math.abs(deltaX) > Math.abs(deltaY) * 1.2;
+
+    if ((isLongSwipe || isFastSwipe) && isHorizontal) {
+      // Animate the current page out smoothly
+      if (activePage) {
+        activePage.style.transition = 'transform 0.2s ease-out';
+        const exitDirection = deltaX < 0 ? '-100%' : '100%';
+        activePage.style.transform = `translateX(${exitDirection})`;
+      }
+
+      // Small delay before navigation for smooth transition
+      setTimeout(() => {
+        if (deltaX < 0) {
+          // Swipe left - next page
+          nextPage();
+        } else {
+          // Swipe right - previous page
+          previousPage();
+        }
+
+        // Reset the page style
+        if (activePage) {
+          activePage.style.transition = '';
+          activePage.style.transform = '';
+        }
+      }, 100);
+    } else {
+      // Snap back to original position
+      if (activePage) {
+        activePage.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)';
+        activePage.style.transform = 'translateX(0)';
+
+        setTimeout(() => {
+          activePage.style.transition = '';
+          activePage.style.transform = '';
+        }, 300);
       }
     }
 
@@ -695,8 +737,13 @@ function addPageSwipeSupport() {
   body.addEventListener('touchcancel', function() {
     const activePage = document.querySelector('.page-container.active');
     if (activePage) {
-      activePage.style.transition = '';
-      activePage.style.transform = '';
+      activePage.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)';
+      activePage.style.transform = 'translateX(0)';
+
+      setTimeout(() => {
+        activePage.style.transition = '';
+        activePage.style.transform = '';
+      }, 300);
     }
     isSwiping = false;
     swipeDirection = null;
