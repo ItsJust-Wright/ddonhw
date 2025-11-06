@@ -337,6 +337,11 @@ li, .project-tab, .carousel-btn, .go-home-btn {
 
 /* ===== MOBILE RESPONSIVE STYLES ===== */
 @media screen and (max-width: 768px) {
+  /* Fix education section inline text - put Expected Graduation on new line */
+  .c16 span {
+    display: block !important;
+  }
+
   /* Remove the gray background on mobile and disable scrolling */
   html, body {
     background: #ffffff;
