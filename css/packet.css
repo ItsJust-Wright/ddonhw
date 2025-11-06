@@ -18,6 +18,9 @@ li:hover span {
   transform: translateX(-50%) scale(0.68);
   transform-origin: top center;
   z-index: 1;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .page-container.active {
@@ -194,6 +197,9 @@ body {
   display: flex;
   height: 100%;
   transition: transform 0.5s ease-in-out;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .carousel-image {
@@ -323,120 +329,12 @@ body {
   }
 }
 
-/* ===== MOBILE RESPONSIVE STYLES ===== */
-@media screen and (max-width: 768px) {
-  /* Reset body background and ensure proper scrolling */
-  html, body {
-    background: #f0f0f0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
-  body {
-    position: relative !important;
-    min-height: 100vh;
-    padding: 15px !important;
-  }
-
-  /* Page containers - scale down entire document to fit mobile */
-  body .page-container {
-    position: static !important;
-    left: auto !important;
-    transform: scale(0.55) !important;
-    transform-origin: top center !important;
-    width: 468pt !important;
-    max-width: 468pt !important;
-    padding: 22pt 55pt 50pt 55pt !important;
-    margin: 0 auto !important;
-    margin-bottom: -350px !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15) !important;
-    min-height: 725pt !important;
-    background-color: #ffffff !important;
-  }
-
-  .page-container.active {
-    display: block !important;
-  }
-
-  /* Hide non-active pages on mobile (but not during animation) */
-  .page-container:not(.active):not(.page-exit) {
-    display: none !important;
-  }
-
-  /* Show active page on top during normal state */
-  .page-container.active {
-    position: fixed !important;
-    top: 15px;
-    left: 50%;
-    transform: translateX(-50%) scale(0.55) !important;
-    transform-origin: center top;
-    z-index: 10;
-  }
-
-  /* Enable page exit animation on mobile with adjusted timing */
-  .page-container.page-exit {
-    position: fixed !important;
-    top: 15px;
-    left: 50%;
-    transform-origin: center top;
-    z-index: 20;
-  }
-
-  /* Forward swipe: slide left */
-  .page-container.page-exit[data-exit-direction="left"] {
-    animation: pageExitLeft 0.4s ease-in-out forwards !important;
-  }
-
-  /* Backward swipe: slide right */
-  .page-container.page-exit[data-exit-direction="right"] {
-    animation: pageExitRight 0.4s ease-in-out forwards !important;
-  }
-
-  /* New page entering from left (backward navigation) */
-  .page-container.active[data-enter-direction="left"] {
-    animation: pageEnterLeft 0.4s ease-in-out forwards !important;
-  }
-
-  /* Forward swipe animation - slides left off screen while maintaining scale */
-  @keyframes pageExitLeft {
-    0% {
-      transform: translateX(-50%) scale(0.55);
-    }
-    100% {
-      transform: translateX(-150%) scale(0.55);
-    }
-  }
-
-  /* Backward swipe animation - slides right off screen while maintaining scale */
-  @keyframes pageExitRight {
-    0% {
-      transform: translateX(-50%) scale(0.55);
-    }
-    100% {
-      transform: translateX(50%) scale(0.55);
-    }
-  }
-
-  /* Page entering from left - starts off-screen left, slides into view with scale */
-  @keyframes pageEnterLeft {
-    0% {
-      transform: translateX(-150%) scale(0.55);
-    }
-    100% {
-      transform: translateX(-50%) scale(0.55);
-    }
-  }
-
-  /* Keep original fonts and layout - entire document is scaled */
-
-  /* Page curl - hidden on mobile (not needed with swipe) */
-  .page-curl {
-    display: none;
-  }
+/* Smooth touch interactions for all devices */
+li, .project-tab, .carousel-btn, .go-home-btn {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  touch-action: manipulation;
 }
+
 /* ===== MOBILE RESPONSIVE STYLES ===== */
 @media screen and (max-width: 768px) {
   /* Remove the gray background on mobile */
@@ -444,6 +342,7 @@ body {
     background: #ffffff;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
   }
 
   /* Make the page container full-width and remove scaling */
@@ -482,34 +381,18 @@ body {
     height: 100vh;
     z-index: 20;
     overflow: hidden;
+    padding: 20px !important;
+    box-sizing: border-box;
   }
 
-  /* Slide left animation */
+  /* Slide left animation with fade */
   .page-container.page-exit[data-exit-direction="left"] {
     animation: mobilePageExitLeft 0.4s ease-in-out forwards !important;
   }
 
-  /* Slide right animation */
+  /* Slide right animation with fade */
   .page-container.page-exit[data-exit-direction="right"] {
     animation: mobilePageExitRight 0.4s ease-in-out forwards !important;
-  }
-
-  @keyframes mobilePageExitLeft {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
-  }
-
-  @keyframes mobilePageExitRight {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(100%);
-    }
   }
 
   /* Page entering from left */
@@ -517,12 +400,52 @@ body {
     animation: mobilePageEnterLeft 0.4s ease-in-out forwards !important;
   }
 
+  /* Page entering from right */
+  .page-container.active[data-enter-direction="right"] {
+    animation: mobilePageEnterRight 0.4s ease-in-out forwards !important;
+  }
+
+  @keyframes mobilePageExitLeft {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(-100%);
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes mobilePageExitRight {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100%);
+      opacity: 0.8;
+    }
+  }
+
   @keyframes mobilePageEnterLeft {
     0% {
       transform: translateX(-100%);
+      opacity: 0.8;
     }
     100% {
       transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mobilePageEnterRight {
+    0% {
+      transform: translateX(100%);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
     }
   }
 
@@ -536,6 +459,7 @@ body {
     max-width: 100%;
     height: auto;
     aspect-ratio: 1;
+    margin: 15px 0;
   }
 
   .carousel-image {
@@ -543,15 +467,60 @@ body {
     height: 100%;
   }
 
+  .carousel-text-card {
+    width: 100%;
+    height: 100%;
+    padding: 40px 20px;
+  }
+
   /* Adjust tabs for mobile */
   .project-tabs {
     max-width: 100%;
+    margin: 15px 0 0 0;
   }
 
   .project-tab {
     font-size: 12px;
     padding: 8px 12px;
   }
+
+  /* Adjust carousel buttons for mobile */
+  .carousel-btn {
+    font-size: 24px;
+    padding: 8px 12px;
+  }
+
+  .carousel-prev {
+    left: 5px;
+  }
+
+  .carousel-next {
+    right: 5px;
+  }
+
+  /* Adjust indicators for mobile */
+  .carousel-indicators {
+    bottom: 10px;
+    gap: 6px;
+  }
+
+  .carousel-dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* Adjust go home button for mobile */
+  .go-home-btn {
+    margin-top: 15px;
+    padding: 8px 16px;
+    font-size: 10pt;
+  }
 }
 
-/* Remove the iPhone specific section - use same styles for all mobile */
+/* Landscape orientation on mobile */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .carousel-container {
+    aspect-ratio: 16 / 9;
+    max-height: 60vh;
+  }
+}

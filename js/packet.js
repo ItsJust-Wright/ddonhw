@@ -526,28 +526,45 @@ function addSwipeSupport() {
 
 function addSwipeListener(element, moveFunction) {
   let touchStartX = 0;
-  let touchEndX = 0;
   let touchStartY = 0;
-  let touchEndY = 0;
-  const minSwipeDistance = 50; // Minimum distance for a swipe
+  let touchCurrentX = 0;
+  let touchCurrentY = 0;
+  let isSwiping = false;
+  const minSwipeDistance = 50;
+  const swipeThreshold = 20;
 
   element.addEventListener('touchstart', function(e) {
-    touchStartX = e.changedTouches[0].screenX;
-    touchStartY = e.changedTouches[0].screenY;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchCurrentX = touchStartX;
+    touchCurrentY = touchStartY;
+    isSwiping = false;
   }, { passive: true });
+
+  element.addEventListener('touchmove', function(e) {
+    touchCurrentX = e.touches[0].clientX;
+    touchCurrentY = e.touches[0].clientY;
+
+    const deltaX = touchCurrentX - touchStartX;
+    const deltaY = touchCurrentY - touchStartY;
+
+    // Check if this is a horizontal swipe
+    if (!isSwiping && Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY)) {
+      isSwiping = true;
+      e.preventDefault(); // Prevent scrolling during carousel swipe
+    } else if (isSwiping) {
+      e.preventDefault();
+    }
+  }, { passive: false });
 
   element.addEventListener('touchend', function(e) {
-    touchEndX = e.changedTouches[0].screenX;
-    touchEndY = e.changedTouches[0].screenY;
-    handleSwipe();
-  }, { passive: true });
+    if (!isSwiping) return;
 
-  function handleSwipe() {
-    const deltaX = touchEndX - touchStartX;
-    const deltaY = touchEndY - touchStartY;
+    const deltaX = touchCurrentX - touchStartX;
+    const deltaY = touchCurrentY - touchStartY;
 
-    // Check if horizontal swipe is greater than vertical (to avoid interfering with scrolling)
-    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+    // Swipe was long enough and horizontal
+    if (Math.abs(deltaX) > minSwipeDistance && Math.abs(deltaX) > Math.abs(deltaY)) {
       if (deltaX < 0) {
         // Swipe left - next slide
         moveFunction(1);
@@ -556,7 +573,13 @@ function addSwipeListener(element, moveFunction) {
         moveFunction(-1);
       }
     }
-  }
+
+    isSwiping = false;
+  }, { passive: true });
+
+  element.addEventListener('touchcancel', function() {
+    isSwiping = false;
+  }, { passive: true });
 }
 
 // Prevent horizontal scroll bounce on iOS
@@ -572,41 +595,89 @@ document.addEventListener('touchmove', function(e) {
   }
 }, { passive: false });
 
-// Page swipe navigation for mobile
+// Page swipe navigation for mobile with real-time tracking
 function addPageSwipeSupport() {
-  // Only add on mobile devices (screen width <= 768px)
+  // Only add on mobile devices
   if (window.innerWidth > 768) return;
 
   const body = document.body;
   let touchStartX = 0;
-  let touchEndX = 0;
   let touchStartY = 0;
-  let touchEndY = 0;
-  const minSwipeDistance = 75; // Minimum distance for a page swipe (higher than carousel to avoid conflicts)
+  let touchCurrentX = 0;
+  let touchCurrentY = 0;
+  let isSwiping = false;
+  let swipeDirection = null;
+  const minSwipeDistance = 75;
+  const swipeThreshold = 30; // How far user needs to move before we consider it a swipe
 
   body.addEventListener('touchstart', function(e) {
-    // Don't trigger page swipe if touching a carousel
-    if (e.target.closest('.carousel-container')) return;
+    // Don't trigger page swipe if touching a carousel or interactive element
+    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a')) return;
 
-    touchStartX = e.changedTouches[0].screenX;
-    touchStartY = e.changedTouches[0].screenY;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchCurrentX = touchStartX;
+    touchCurrentY = touchStartY;
+    isSwiping = false;
+    swipeDirection = null;
   }, { passive: true });
+
+  body.addEventListener('touchmove', function(e) {
+    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a')) return;
+
+    touchCurrentX = e.touches[0].clientX;
+    touchCurrentY = e.touches[0].clientY;
+
+    const deltaX = touchCurrentX - touchStartX;
+    const deltaY = touchCurrentY - touchStartY;
+
+    // Determine if this is a horizontal swipe
+    if (!isSwiping && Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY)) {
+      isSwiping = true;
+      swipeDirection = deltaX > 0 ? 'right' : 'left';
+      
+      // Prevent scrolling during horizontal swipe
+      e.preventDefault();
+      
+      // Add visual feedback - slight movement of the page
+      const activePage = document.querySelector('.page-container.active');
+      if (activePage) {
+        // Limit the drag to 30% of screen width for a rubber-band effect
+        const maxDrag = window.innerWidth * 0.3;
+        const dragAmount = Math.max(-maxDrag, Math.min(maxDrag, deltaX * 0.5));
+        activePage.style.transition = 'none';
+        activePage.style.transform = `translateX(${dragAmount}px)`;
+      }
+    } else if (isSwiping) {
+      e.preventDefault();
+      
+      // Continue updating visual feedback
+      const activePage = document.querySelector('.page-container.active');
+      if (activePage) {
+        const maxDrag = window.innerWidth * 0.3;
+        const dragAmount = Math.max(-maxDrag, Math.min(maxDrag, deltaX * 0.5));
+        activePage.style.transform = `translateX(${dragAmount}px)`;
+      }
+    }
+  }, { passive: false });
 
   body.addEventListener('touchend', function(e) {
-    // Don't trigger page swipe if touching a carousel
-    if (e.target.closest('.carousel-container')) return;
+    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a')) return;
 
-    touchEndX = e.changedTouches[0].screenX;
-    touchEndY = e.changedTouches[0].screenY;
-    handlePageSwipe();
-  }, { passive: true });
+    // Reset visual feedback
+    const activePage = document.querySelector('.page-container.active');
+    if (activePage) {
+      activePage.style.transition = '';
+      activePage.style.transform = '';
+    }
 
-  function handlePageSwipe() {
-    const deltaX = touchEndX - touchStartX;
-    const deltaY = touchEndY - touchStartY;
+    if (!isSwiping) return;
 
-    // Check if horizontal swipe is greater than vertical (to avoid interfering with scrolling)
-    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+    const deltaX = touchCurrentX - touchStartX;
+    const deltaY = touchCurrentY - touchStartY;
+
+    // Check if swipe was long enough and predominantly horizontal
+    if (Math.abs(deltaX) > minSwipeDistance && Math.abs(deltaX) > Math.abs(deltaY)) {
       if (deltaX < 0) {
         // Swipe left - next page
         nextPage();
@@ -615,7 +686,21 @@ function addPageSwipeSupport() {
         previousPage();
       }
     }
-  }
+
+    isSwiping = false;
+    swipeDirection = null;
+  }, { passive: true });
+
+  // Cancel swipe on touch cancel
+  body.addEventListener('touchcancel', function() {
+    const activePage = document.querySelector('.page-container.active');
+    if (activePage) {
+      activePage.style.transition = '';
+      activePage.style.transform = '';
+    }
+    isSwiping = false;
+    swipeDirection = null;
+  }, { passive: true });
 }
 
 // Lazy Loading Helper Functions
