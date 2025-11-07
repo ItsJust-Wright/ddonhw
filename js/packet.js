@@ -64,7 +64,14 @@ function getNextPage() {
   const currentId = currentPage.id;
 
   // Define page order: home -> page-1 -> page-2 -> ... -> page-8 -> home
+  // Note: page-9 is excluded - it's a hidden page accessible only via direct link
   const pageOrder = ['home-page', 'page-1', 'page-2', 'page-3', 'page-4', 'page-5', 'page-6', 'page-7', 'page-8'];
+
+  // If we're on page-9, go back to home
+  if (currentId === 'page-9') {
+    return 'home-page';
+  }
+
   const currentIndex = pageOrder.indexOf(currentId);
   const nextIndex = (currentIndex + 1) % pageOrder.length;
 
@@ -88,7 +95,14 @@ function getPreviousPage() {
   const currentId = currentPage.id;
 
   // Define page order: home -> page-1 -> page-2 -> ... -> page-8 -> home
+  // Note: page-9 is excluded - it's a hidden page accessible only via direct link
   const pageOrder = ['home-page', 'page-1', 'page-2', 'page-3', 'page-4', 'page-5', 'page-6', 'page-7', 'page-8'];
+
+  // If we're on page-9, go back to home
+  if (currentId === 'page-9') {
+    return 'home-page';
+  }
+
   const currentIndex = pageOrder.indexOf(currentId);
   const prevIndex = (currentIndex - 1 + pageOrder.length) % pageOrder.length;
 
@@ -113,6 +127,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
   bulletPoints.forEach(bullet => {
     bullet.addEventListener('click', function(e) {
+      // Prevent default action
+      e.preventDefault();
+
+      // Get the page number from data-page attribute
+      const pageNum = this.getAttribute('data-page');
+
+      // Navigate to that page
+      showPage(pageNum);
+    });
+  });
+
+  // Add click event listeners to clickable skills (like "Machining")
+  const clickableSkills = document.querySelectorAll('.clickable-skill[data-page]');
+
+  clickableSkills.forEach(skill => {
+    skill.addEventListener('click', function(e) {
       // Prevent default action
       e.preventDefault();
 

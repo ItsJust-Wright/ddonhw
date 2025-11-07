@@ -8,6 +8,16 @@ li:hover span {
   text-decoration: underline;
 }
 
+/* Make clickable skills interactive - same effect as bullet points */
+.clickable-skill {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clickable-skill:hover {
+  text-decoration: underline;
+}
+
 /* Page containers */
 .page-container {
   display: block;
