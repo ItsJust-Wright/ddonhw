@@ -503,6 +503,52 @@ function updateQuotingCarousel() {
   });
 }
 
+// Archer Carousel
+let currentArcherSlide = 0;
+
+function moveArcherCarousel(direction) {
+  const track = document.querySelector('.archer-track');
+  const allSlides = track.children;
+  const totalSlides = allSlides.length;
+
+  currentArcherSlide += direction;
+
+  // Loop around
+  if (currentArcherSlide < 0) {
+    currentArcherSlide = totalSlides - 1;
+  } else if (currentArcherSlide >= totalSlides) {
+    currentArcherSlide = 0;
+  }
+
+  updateArcherCarousel();
+  loadAdjacentImages('.archer-track', currentArcherSlide);
+}
+
+function goToArcherSlide(index) {
+  currentArcherSlide = index;
+  updateArcherCarousel();
+  loadAdjacentImages('.archer-track', currentArcherSlide);
+}
+
+function updateArcherCarousel() {
+  const track = document.querySelector('.archer-track');
+  const dots = document.querySelectorAll('.archer-indicators .carousel-dot');
+
+  if (track) {
+    const offset = -currentArcherSlide * 100;
+    track.style.transform = `translateX(${offset}%)`;
+  }
+
+  // Update dots
+  dots.forEach((dot, index) => {
+    if (index === currentArcherSlide) {
+      dot.classList.add('active');
+    } else {
+      dot.classList.remove('active');
+    }
+  });
+}
+
 // Touch/Swipe Support for Carousels
 function addSwipeSupport() {
   // Add swipe to main carousel (page-3)
@@ -521,6 +567,12 @@ function addSwipeSupport() {
   const quotingCarousel = document.querySelector('.quoting-carousel');
   if (quotingCarousel) {
     addSwipeListener(quotingCarousel, moveQuotingCarousel);
+  }
+
+  // Add swipe to archer carousel (page-4)
+  const archerCarousel = document.querySelector('.archer-carousel');
+  if (archerCarousel) {
+    addSwipeListener(archerCarousel, moveArcherCarousel);
   }
 }
 

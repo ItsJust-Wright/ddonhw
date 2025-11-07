@@ -313,7 +313,8 @@ li:hover a.link-clean { text-decoration: underline; cursor: pointer; }
 
   <h5 class="c3"><span class="c10 c4">EDUCATION </span></h5>
   <p class="c16"><span class="c4">California Polytechnic State University, San Luis Obispo        </span><span class="c7 c13 c21">San Luis Obispo, CA</span></p>
-  <p class="c16"><span class="c7 c13">Bachelor of Science in Industrial Technology         </span><span class="c15 c7 c13 c21">Expected Graduation-December 2025</span></p>
+  <p class="c16"><span class="c7 c13">Bachelor of Science in Industrial Technology</span></p>
+  <p class="c16"><span class="c15 c7 c13 c21">Expected Graduation-December 2025</span></p>
 
   <p class="c8"><span class="c20 c7"></span></p>
   <h5 class="c3"><span class="c10 c4">WORK EXPERIENCE</span></h5>
@@ -521,6 +522,26 @@ li:hover a.link-clean { text-decoration: underline; cursor: pointer; }
       </p>
     </div>
     <p class="c0"><span class="c10 c7">Supported engineering clients such as Archer, assisting Flight Test Instrumentation on-site with hardware installs on tilter and lifter assemblies under flight-line constraints.</span></p>
+
+    <!-- Archer Carousel -->
+    <div class="carousel-container archer-carousel">
+      <div class="carousel-track archer-track">
+        <img src="photos/aerocrafted/archer/1.jpeg" alt="Archer On Site 1" class="carousel-image" loading="eager">
+        <img data-src="photos/aerocrafted/archer/2.jpeg" alt="Archer On Site 2" class="carousel-image lazy-load">
+        <div class="carousel-text-card">
+          <h3 class="carousel-card-title">Archer On Site</h3>
+          <p class="carousel-card-text">Flight test instrumentation support with hardware installations on tilter and lifter assemblies.</p>
+        </div>
+      </div>
+      <button class="carousel-btn carousel-prev" onclick="moveArcherCarousel(-1)">‹</button>
+      <button class="carousel-btn carousel-next" onclick="moveArcherCarousel(1)">›</button>
+      <div class="carousel-indicators archer-indicators">
+        <span class="carousel-dot active" onclick="goToArcherSlide(0)"></span>
+        <span class="carousel-dot" onclick="goToArcherSlide(1)"></span>
+        <span class="carousel-dot" onclick="goToArcherSlide(2)"></span>
+      </div>
+    </div>
+
     <button class="go-home-btn" onclick="showPage('home')">Go Home</button>
   </div>
 
