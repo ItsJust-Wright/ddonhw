@@ -613,6 +613,26 @@ li:hover a.link-clean { text-decoration: underline; cursor: pointer; }
     <button class="go-home-btn" onclick="showPage('home')">Go Home</button>
   </div>
 
+  <!-- Image Modal for Desktop -->
+  <div id="imageModal" class="image-modal">
+    <div class="image-modal-content">
+      <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+      <button class="image-modal-prev" onclick="moveModalCarousel(-1)">‹</button>
+      <button class="image-modal-next" onclick="moveModalCarousel(1)">›</button>
+      <div class="image-modal-carousel">
+        <div class="image-modal-track">
+          <!-- Images will be dynamically loaded here -->
+        </div>
+      </div>
+      <div class="image-modal-indicators">
+        <!-- Dots will be dynamically loaded here -->
+      </div>
+      <div class="image-modal-counter">
+        <span id="modalCurrentImage">1</span> / <span id="modalTotalImages">1</span>
+      </div>
+    </div>
+  </div>
+
   <script src="js/packet.js"></script>
 </body>
 </html>

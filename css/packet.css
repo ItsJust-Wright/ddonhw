@@ -345,6 +345,173 @@ li, .project-tab, .carousel-btn, .go-home-btn {
   touch-action: manipulation;
 }
 
+/* ===== DESKTOP-ONLY STYLES ===== */
+@media screen and (min-width: 769px) {
+  /* Make carousel images clickable on desktop */
+  .carousel-image {
+    cursor: zoom-in;
+    transition: opacity 0.2s ease;
+  }
+
+  .carousel-image:hover {
+    opacity: 0.9;
+  }
+
+  /* Image Modal Styles - Desktop Only */
+  .image-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    animation: fadeIn 0.3s ease;
+  }
+
+  .image-modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .image-modal-content {
+    position: relative;
+    width: 90vw;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .image-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: #ffffff;
+    font-size: 48px;
+    font-weight: 300;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10002;
+    line-height: 1;
+    padding: 0;
+    width: 50px;
+    height: 50px;
+    transition: all 0.2s ease;
+  }
+
+  .image-modal-close:hover {
+    color: #cccccc;
+    transform: scale(1.1);
+  }
+
+  .image-modal-carousel {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 80px);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .image-modal-track {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    will-change: transform;
+  }
+
+  .image-modal-track img {
+    width: 100%;
+    min-width: 100%;
+    height: 100%;
+    object-fit: contain;
+    flex-shrink: 0;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .image-modal-prev,
+  .image-modal-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: none;
+    font-size: 48px;
+    padding: 20px 25px;
+    cursor: pointer;
+    z-index: 10001;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    line-height: 1;
+    color: #ffffff;
+    font-weight: 300;
+  }
+
+  .image-modal-prev:hover,
+  .image-modal-next:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .image-modal-prev {
+    left: 30px;
+  }
+
+  .image-modal-next {
+    right: 30px;
+  }
+
+  .image-modal-indicators {
+    display: none;
+  }
+
+  .image-modal-counter {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ffffff;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 8px 16px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+  }
+
+  /* Keyboard navigation hint */
+  .image-modal-content::before {
+    content: 'Use ← → arrow keys or ESC to close';
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    opacity: 1;
+    animation: fadeOut 3s ease forwards;
+    animation-delay: 2s;
+  }
+
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+    }
+  }
+}
+
 /* ===== MOBILE RESPONSIVE STYLES ===== */
 @media screen and (max-width: 768px) {
   /* Remove the gray background on mobile and disable scrolling */

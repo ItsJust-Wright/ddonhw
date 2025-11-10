@@ -174,6 +174,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Initialize lazy loading for images
   initLazyLoading();
+
+  // Add image click handlers for modal (desktop only)
+  setTimeout(addImageClickHandlers, 500);
+
+  // Close modal when clicking outside the image
+  const modal = document.getElementById('imageModal');
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        closeImageModal();
+      }
+    });
+  }
 });
 
 // Carousel functionality
@@ -296,6 +309,20 @@ function switchProject(project) {
   setTimeout(() => {
     loadAdjacentImages('#page-3 .carousel-track', 0);
   }, 100);
+
+  // Re-add click handlers for new images (desktop only)
+  if (window.innerWidth > 768) {
+    setTimeout(() => {
+      const images = track.querySelectorAll('img.carousel-image');
+      images.forEach((img, index) => {
+        img.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          openImageModal('#page-3 .carousel-container', index);
+        });
+      });
+    }, 150);
+  }
 }
 
 function moveCarousel(direction) {
@@ -442,6 +469,20 @@ function switchWholesaleProject(project) {
   setTimeout(() => {
     loadAdjacentImages('.wholesale-track', 0);
   }, 100);
+
+  // Re-add click handlers for new images (desktop only)
+  if (window.innerWidth > 768) {
+    setTimeout(() => {
+      const images = track.querySelectorAll('img.carousel-image');
+      images.forEach((img, index) => {
+        img.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          openImageModal('.wholesale-carousel', index);
+        });
+      });
+    }, 150);
+  }
 }
 
 function moveWholesaleCarousel(direction) {
@@ -934,5 +975,178 @@ function initLazyLoading() {
         lazyLoadImage(images[1]); // Second image
       }
     }
+  });
+}
+
+// ===== IMAGE MODAL FUNCTIONALITY (Desktop Only) =====
+let currentModalSlide = 0;
+let modalImages = [];
+let modalCarouselName = '';
+
+// Open image modal with all images from a carousel
+function openImageModal(carouselSelector, startIndex = 0) {
+  // Only open on desktop
+  if (window.innerWidth <= 768) return;
+
+  const carousel = document.querySelector(carouselSelector);
+  if (!carousel) return;
+
+  const track = carousel.querySelector('.carousel-track');
+  if (!track) return;
+
+  // Get all images from the carousel (excluding text cards)
+  const images = Array.from(track.querySelectorAll('img.carousel-image'));
+  if (images.length === 0) return;
+
+  modalImages = images.map(img => ({
+    src: img.src || img.dataset.src,
+    alt: img.alt
+  }));
+
+  modalCarouselName = carouselSelector;
+  currentModalSlide = startIndex;
+
+  // Get modal elements
+  const modal = document.getElementById('imageModal');
+  const modalTrack = modal.querySelector('.image-modal-track');
+  const modalIndicators = modal.querySelector('.image-modal-indicators');
+
+  // Clear previous content
+  modalTrack.innerHTML = '';
+  modalIndicators.innerHTML = '';
+
+  // Add images to modal
+  modalImages.forEach((img, index) => {
+    const imgElement = document.createElement('img');
+    imgElement.src = img.src;
+    imgElement.alt = img.alt;
+    modalTrack.appendChild(imgElement);
+  });
+
+  // Add indicators
+  modalImages.forEach((img, index) => {
+    const dot = document.createElement('span');
+    dot.className = 'carousel-dot';
+    if (index === currentModalSlide) {
+      dot.classList.add('active');
+    }
+    dot.onclick = () => goToModalSlide(index);
+    modalIndicators.appendChild(dot);
+  });
+
+  // Update counter
+  updateModalCounter();
+
+  // Show modal
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // Update carousel position
+  updateModalCarousel();
+
+  // Add keyboard navigation
+  document.addEventListener('keydown', handleModalKeyboard);
+}
+
+// Close image modal
+function closeImageModal() {
+  const modal = document.getElementById('imageModal');
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+
+  // Remove keyboard navigation
+  document.removeEventListener('keydown', handleModalKeyboard);
+}
+
+// Move modal carousel
+function moveModalCarousel(direction) {
+  currentModalSlide += direction;
+
+  // Loop around
+  if (currentModalSlide < 0) {
+    currentModalSlide = modalImages.length - 1;
+  } else if (currentModalSlide >= modalImages.length) {
+    currentModalSlide = 0;
+  }
+
+  updateModalCarousel();
+  updateModalCounter();
+}
+
+// Go to specific modal slide
+function goToModalSlide(index) {
+  currentModalSlide = index;
+  updateModalCarousel();
+  updateModalCounter();
+}
+
+// Update modal carousel position
+function updateModalCarousel() {
+  const modal = document.getElementById('imageModal');
+  const track = modal.querySelector('.image-modal-track');
+  const dots = modal.querySelectorAll('.image-modal-indicators .carousel-dot');
+
+  if (track) {
+    const offset = -currentModalSlide * 100;
+    track.style.transform = `translateX(${offset}%)`;
+  }
+
+  // Update dots
+  dots.forEach((dot, index) => {
+    if (index === currentModalSlide) {
+      dot.classList.add('active');
+    } else {
+      dot.classList.remove('active');
+    }
+  });
+}
+
+// Update modal counter
+function updateModalCounter() {
+  const currentSpan = document.getElementById('modalCurrentImage');
+  const totalSpan = document.getElementById('modalTotalImages');
+
+  if (currentSpan && totalSpan) {
+    currentSpan.textContent = currentModalSlide + 1;
+    totalSpan.textContent = modalImages.length;
+  }
+}
+
+// Handle keyboard navigation in modal
+function handleModalKeyboard(e) {
+  if (e.key === 'Escape') {
+    closeImageModal();
+  } else if (e.key === 'ArrowLeft') {
+    moveModalCarousel(-1);
+  } else if (e.key === 'ArrowRight') {
+    moveModalCarousel(1);
+  }
+}
+
+// Add click handlers to all carousel images (desktop only)
+function addImageClickHandlers() {
+  // Only add on desktop
+  if (window.innerWidth <= 768) return;
+
+  // Map carousel containers to their selectors
+  const carouselMap = [
+    { container: '.quoting-carousel', selector: '.quoting-carousel' },
+    { container: '.wholesale-carousel', selector: '.wholesale-carousel' },
+    { container: '#page-3 .carousel-container', selector: '#page-3 .carousel-container' },
+    { container: '.archer-carousel', selector: '.archer-carousel' }
+  ];
+
+  carouselMap.forEach(({ container, selector }) => {
+    const carousel = document.querySelector(container);
+    if (!carousel) return;
+
+    const images = carousel.querySelectorAll('img.carousel-image');
+    images.forEach((img, index) => {
+      img.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openImageModal(selector, index);
+      });
+    });
   });
 }
