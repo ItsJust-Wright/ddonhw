@@ -273,14 +273,14 @@ h1.c18, .c18 {
 }
 .c16:nth-of-type(1)::after{ content:""; display:block; clear:both; }
 
-/* right-flush EXPECTED GRAD (second edu line) */
-.c16:nth-of-type(2) .c21{
+/* right-flush EXPECTED GRAD (third edu line) */
+.c16:nth-of-type(3) .c21{
   float: right;
   margin-left: 12px;
   white-space: nowrap;
   padding: 0;             /* keep tight */
 }
-.c16:nth-of-type(2)::after{ content:""; display:block; clear:both; }
+.c16:nth-of-type(3)::after{ content:""; display:block; clear:both; }
 
 
 /* extra gap under the WORK EXPERIENCE ruled heading */
@@ -313,8 +313,7 @@ li:hover a.link-clean { text-decoration: underline; cursor: pointer; }
 
   <h5 class="c3"><span class="c10 c4">EDUCATION </span></h5>
   <p class="c16"><span class="c4">California Polytechnic State University, San Luis Obispo        </span><span class="c7 c13 c21">San Luis Obispo, CA</span></p>
-  <p class="c16"><span class="c7 c13">Bachelor of Science in Industrial Technology</span></p>
-  <p class="c16"><span class="c15 c7 c13 c21">Expected Graduation-December 2025</span></p>
+  <p class="c16"><span class="c7 c13">Bachelor of Science in Industrial Technology</span><span class="c7 c13 c21">Expected Graduation-December 2025</span></p>
 
   <p class="c8"><span class="c20 c7"></span></p>
   <h5 class="c3"><span class="c10 c4">WORK EXPERIENCE</span></h5>
@@ -617,6 +616,25 @@ li:hover a.link-clean { text-decoration: underline; cursor: pointer; }
       </p>
     </div>
     <p class="c0"><span class="c10 c7">Developed and maintained an Excel-based Kanban tracking system to visualize work-in-progress, prioritize jobs, and improve machine utilization.</span></p>
+
+    <!-- Zone 5 Kanban Board Carousel -->
+    <div class="carousel-container kanban-carousel">
+      <div class="carousel-track kanban-track">
+        <img src="photos/zone_5/1.png" alt="Kanban Board 1" class="carousel-image" loading="eager">
+        <img src="photos/zone_5/2.png" alt="Kanban Board 2" class="carousel-image">
+        <img src="photos/zone_5/3.png" alt="Kanban Board 3" class="carousel-image">
+        <img src="photos/zone_5/4.png" alt="Kanban Board 4" class="carousel-image">
+      </div>
+      <button class="carousel-btn carousel-prev" onclick="moveKanbanCarousel(-1)">‹</button>
+      <button class="carousel-btn carousel-next" onclick="moveKanbanCarousel(1)">›</button>
+      <div class="carousel-indicators kanban-indicators">
+        <span class="carousel-dot active" onclick="goToKanbanSlide(0)"></span>
+        <span class="carousel-dot" onclick="goToKanbanSlide(1)"></span>
+        <span class="carousel-dot" onclick="goToKanbanSlide(2)"></span>
+        <span class="carousel-dot" onclick="goToKanbanSlide(3)"></span>
+      </div>
+    </div>
+
     <button class="go-home-btn" onclick="showPage('home')">Go Home</button>
   </div>
 
@@ -648,6 +666,35 @@ li:hover a.link-clean { text-decoration: underline; cursor: pointer; }
 
     <h5 class="c3"><span class="c10 c4">Quality & Precision</span></h5>
     <p class="c0"><span class="c7">Strong understanding of GD&T, tolerance analysis, and inspection methods. Committed to maintaining tight tolerances and high-quality standards in all machining operations.</span></p>
+
+    <button class="go-home-btn" onclick="showPage('home')">Go Home</button>
+  </div>
+
+  <div id="page-10" class="page-container">
+    <div>
+      <h1 class="c18"><span class="c4 c6">About Me</span></h1>
+      <p class="c17"><span class="c7 c12">Henry Wright</span></p>
+    </div>
+
+    <p class="c0"><span class="c7">[Add your short about me text here]</span></p>
+
+    <!-- Misc Photos Carousel -->
+    <div class="carousel-container misc-carousel">
+      <div class="carousel-track misc-track">
+        <img src="photos/misc/1.JPG" alt="About Me 1" class="carousel-image" loading="eager">
+        <img src="photos/misc/2.jpg" alt="About Me 2" class="carousel-image">
+        <img src="photos/misc/3.JPG" alt="About Me 3" class="carousel-image">
+        <img src="photos/misc/4.png" alt="About Me 4" class="carousel-image">
+      </div>
+      <button class="carousel-btn carousel-prev" onclick="moveMiscCarousel(-1)">‹</button>
+      <button class="carousel-btn carousel-next" onclick="moveMiscCarousel(1)">›</button>
+      <div class="carousel-indicators misc-indicators">
+        <span class="carousel-dot active" onclick="goToMiscSlide(0)"></span>
+        <span class="carousel-dot" onclick="goToMiscSlide(1)"></span>
+        <span class="carousel-dot" onclick="goToMiscSlide(2)"></span>
+        <span class="carousel-dot" onclick="goToMiscSlide(3)"></span>
+      </div>
+    </div>
 
     <button class="go-home-btn" onclick="showPage('home')">Go Home</button>
   </div>

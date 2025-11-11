@@ -187,6 +187,18 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+
+  // Add click handlers to "Henry Wright" headers to navigate to About Me page
+  const henryWrightHeaders = document.querySelectorAll('.c18 .c4.c6');
+  henryWrightHeaders.forEach(header => {
+    if (header.textContent.trim() === 'Henry Wright') {
+      header.style.cursor = 'pointer';
+      header.addEventListener('click', function(e) {
+        e.preventDefault();
+        showPage(10);
+      });
+    }
+  });
 });
 
 // Carousel functionality
@@ -666,6 +678,98 @@ function updateHadrianCarousel() {
   });
 }
 
+// Kanban Carousel
+let currentKanbanSlide = 0;
+
+function moveKanbanCarousel(direction) {
+  const track = document.querySelector('.kanban-track');
+  const allSlides = track.children;
+  const totalSlides = allSlides.length;
+
+  currentKanbanSlide += direction;
+
+  // Loop around
+  if (currentKanbanSlide < 0) {
+    currentKanbanSlide = totalSlides - 1;
+  } else if (currentKanbanSlide >= totalSlides) {
+    currentKanbanSlide = 0;
+  }
+
+  updateKanbanCarousel();
+  loadAdjacentImages('.kanban-track', currentKanbanSlide);
+}
+
+function goToKanbanSlide(index) {
+  currentKanbanSlide = index;
+  updateKanbanCarousel();
+  loadAdjacentImages('.kanban-track', currentKanbanSlide);
+}
+
+function updateKanbanCarousel() {
+  const track = document.querySelector('.kanban-track');
+  const dots = document.querySelectorAll('.kanban-indicators .carousel-dot');
+
+  if (track) {
+    const offset = -currentKanbanSlide * 100;
+    track.style.transform = `translateX(${offset}%)`;
+  }
+
+  // Update dots
+  dots.forEach((dot, index) => {
+    if (index === currentKanbanSlide) {
+      dot.classList.add('active');
+    } else {
+      dot.classList.remove('active');
+    }
+  });
+}
+
+// Misc Carousel (About Me page)
+let currentMiscSlide = 0;
+
+function moveMiscCarousel(direction) {
+  const track = document.querySelector('.misc-track');
+  const allSlides = track.children;
+  const totalSlides = allSlides.length;
+
+  currentMiscSlide += direction;
+
+  // Loop around
+  if (currentMiscSlide < 0) {
+    currentMiscSlide = totalSlides - 1;
+  } else if (currentMiscSlide >= totalSlides) {
+    currentMiscSlide = 0;
+  }
+
+  updateMiscCarousel();
+  loadAdjacentImages('.misc-track', currentMiscSlide);
+}
+
+function goToMiscSlide(index) {
+  currentMiscSlide = index;
+  updateMiscCarousel();
+  loadAdjacentImages('.misc-track', currentMiscSlide);
+}
+
+function updateMiscCarousel() {
+  const track = document.querySelector('.misc-track');
+  const dots = document.querySelectorAll('.misc-indicators .carousel-dot');
+
+  if (track) {
+    const offset = -currentMiscSlide * 100;
+    track.style.transform = `translateX(${offset}%)`;
+  }
+
+  // Update dots
+  dots.forEach((dot, index) => {
+    if (index === currentMiscSlide) {
+      dot.classList.add('active');
+    } else {
+      dot.classList.remove('active');
+    }
+  });
+}
+
 // Touch/Swipe Support for Carousels
 function addSwipeSupport() {
   // Add swipe to main carousel (page-3)
@@ -696,6 +800,18 @@ function addSwipeSupport() {
   const hadrianCarousel = document.querySelector('.hadrian-carousel');
   if (hadrianCarousel) {
     addSwipeListener(hadrianCarousel, moveHadrianCarousel);
+  }
+
+  // Add swipe to kanban carousel (page-7)
+  const kanbanCarousel = document.querySelector('.kanban-carousel');
+  if (kanbanCarousel) {
+    addSwipeListener(kanbanCarousel, moveKanbanCarousel);
+  }
+
+  // Add swipe to misc carousel (page-10)
+  const miscCarousel = document.querySelector('.misc-carousel');
+  if (miscCarousel) {
+    addSwipeListener(miscCarousel, moveMiscCarousel);
   }
 }
 
@@ -1186,7 +1302,9 @@ function addImageClickHandlers() {
     { container: '.wholesale-carousel', selector: '.wholesale-carousel' },
     { container: '#page-3 .carousel-container', selector: '#page-3 .carousel-container' },
     { container: '.archer-carousel', selector: '.archer-carousel' },
-    { container: '.hadrian-carousel', selector: '.hadrian-carousel' }
+    { container: '.hadrian-carousel', selector: '.hadrian-carousel' },
+    { container: '.kanban-carousel', selector: '.kanban-carousel' },
+    { container: '.misc-carousel', selector: '.misc-carousel' }
   ];
 
   carouselMap.forEach(({ container, selector }) => {
