@@ -493,9 +493,8 @@ li, .project-tab, .carousel-btn, .go-home-btn {
   .image-modal-content::before {
     content: 'Use ← → arrow keys or ESC to close';
     position: absolute;
-    top: 30px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 20px;
+    left: 30px;
     color: rgba(255, 255, 255, 0.6);
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
@@ -503,6 +502,7 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     opacity: 1;
     animation: fadeOut 3s ease forwards;
     animation-delay: 2s;
+    z-index: 10003;
   }
 
   @keyframes fadeOut {

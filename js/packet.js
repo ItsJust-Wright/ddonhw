@@ -620,6 +620,52 @@ function updateArcherCarousel() {
   });
 }
 
+// Hadrian Carousel
+let currentHadrianSlide = 0;
+
+function moveHadrianCarousel(direction) {
+  const track = document.querySelector('.hadrian-track');
+  const allSlides = track.children;
+  const totalSlides = allSlides.length;
+
+  currentHadrianSlide += direction;
+
+  // Loop around
+  if (currentHadrianSlide < 0) {
+    currentHadrianSlide = totalSlides - 1;
+  } else if (currentHadrianSlide >= totalSlides) {
+    currentHadrianSlide = 0;
+  }
+
+  updateHadrianCarousel();
+  loadAdjacentImages('.hadrian-track', currentHadrianSlide);
+}
+
+function goToHadrianSlide(index) {
+  currentHadrianSlide = index;
+  updateHadrianCarousel();
+  loadAdjacentImages('.hadrian-track', currentHadrianSlide);
+}
+
+function updateHadrianCarousel() {
+  const track = document.querySelector('.hadrian-track');
+  const dots = document.querySelectorAll('.hadrian-indicators .carousel-dot');
+
+  if (track) {
+    const offset = -currentHadrianSlide * 100;
+    track.style.transform = `translateX(${offset}%)`;
+  }
+
+  // Update dots
+  dots.forEach((dot, index) => {
+    if (index === currentHadrianSlide) {
+      dot.classList.add('active');
+    } else {
+      dot.classList.remove('active');
+    }
+  });
+}
+
 // Touch/Swipe Support for Carousels
 function addSwipeSupport() {
   // Add swipe to main carousel (page-3)
@@ -644,6 +690,12 @@ function addSwipeSupport() {
   const archerCarousel = document.querySelector('.archer-carousel');
   if (archerCarousel) {
     addSwipeListener(archerCarousel, moveArcherCarousel);
+  }
+
+  // Add swipe to hadrian carousel (page-5)
+  const hadrianCarousel = document.querySelector('.hadrian-carousel');
+  if (hadrianCarousel) {
+    addSwipeListener(hadrianCarousel, moveHadrianCarousel);
   }
 }
 
@@ -1133,7 +1185,8 @@ function addImageClickHandlers() {
     { container: '.quoting-carousel', selector: '.quoting-carousel' },
     { container: '.wholesale-carousel', selector: '.wholesale-carousel' },
     { container: '#page-3 .carousel-container', selector: '#page-3 .carousel-container' },
-    { container: '.archer-carousel', selector: '.archer-carousel' }
+    { container: '.archer-carousel', selector: '.archer-carousel' },
+    { container: '.hadrian-carousel', selector: '.hadrian-carousel' }
   ];
 
   carouselMap.forEach(({ container, selector }) => {
