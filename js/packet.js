@@ -770,6 +770,144 @@ function updateMiscCarousel() {
   });
 }
 
+// CNC Carousel (Machining page)
+let currentCncSlide = 0;
+let currentCncProject = 'baja';
+
+const cncProjectImages = {
+  baja: [
+    'photos/cnc_photos/baja/1.jpg',
+    'photos/cnc_photos/baja/2.jpg',
+    'photos/cnc_photos/baja/3.jpg',
+    'photos/cnc_photos/baja/4.jpg',
+    'photos/cnc_photos/baja/5.jpg',
+    'photos/cnc_photos/baja/6.jpg',
+    'photos/cnc_photos/baja/7.jpg',
+    'photos/cnc_photos/baja/8.jpg',
+    'photos/cnc_photos/baja/9.jpg',
+    'photos/cnc_photos/baja/10.jpg'
+  ],
+  rottweiler: [
+    'photos/cnc_photos/rottweiler/1.png',
+    'photos/cnc_photos/rottweiler/2.jpg',
+    'photos/cnc_photos/rottweiler/3.jpg',
+    'photos/cnc_photos/rottweiler/4.jpg',
+    'photos/cnc_photos/rottweiler/5.png',
+    'photos/cnc_photos/rottweiler/6.jpg',
+    'photos/cnc_photos/rottweiler/7.jpg',
+    'photos/cnc_photos/rottweiler/8.jpg'
+  ],
+  misc: [
+    'photos/cnc_photos/misc/1.jpg',
+    'photos/cnc_photos/misc/2.jpg',
+    'photos/cnc_photos/misc/3.jpg',
+    'photos/cnc_photos/misc/4.jpg',
+    'photos/cnc_photos/misc/5.jpg',
+    'photos/cnc_photos/misc/6.jpg',
+    'photos/cnc_photos/misc/7.jpg',
+    'photos/cnc_photos/misc/8.jpg',
+    'photos/cnc_photos/misc/9.jpg',
+    'photos/cnc_photos/misc/10.jpg'
+  ]
+};
+
+function switchCncProject(project) {
+  currentCncProject = project;
+  currentCncSlide = 0;
+
+  const track = document.querySelector('.cnc-track');
+  const images = cncProjectImages[project];
+
+  // Clear existing images
+  track.innerHTML = '';
+
+  // Add new images
+  images.forEach((src, index) => {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = `${project} ${index + 1}`;
+    img.className = 'carousel-image';
+    track.appendChild(img);
+  });
+
+  // Update indicators
+  const indicatorsContainer = document.querySelector('.cnc-indicators');
+  indicatorsContainer.innerHTML = '';
+  images.forEach((_, index) => {
+    const dot = document.createElement('span');
+    dot.className = 'carousel-dot';
+    if (index === 0) dot.classList.add('active');
+    dot.onclick = () => goToCncSlide(index);
+    indicatorsContainer.appendChild(dot);
+  });
+
+  // Update tabs
+  const clickedTab = document.querySelector(`#page-9 .project-tab[onclick*="${project}"]`);
+  document.querySelectorAll('#page-9 .project-tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  if (clickedTab) {
+    clickedTab.classList.add('active');
+  }
+
+  updateCncCarousel();
+
+  // Re-add click handlers for new images (desktop only)
+  if (window.innerWidth > 768) {
+    setTimeout(() => {
+      const images = track.querySelectorAll('img.carousel-image');
+      images.forEach((img, index) => {
+        img.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          openImageModal('.cnc-carousel', index);
+        });
+      });
+    }, 150);
+  }
+}
+
+function moveCncCarousel(direction) {
+  const track = document.querySelector('.cnc-track');
+  const allSlides = track.children;
+  const totalSlides = allSlides.length;
+
+  currentCncSlide += direction;
+
+  // Loop around
+  if (currentCncSlide < 0) {
+    currentCncSlide = totalSlides - 1;
+  } else if (currentCncSlide >= totalSlides) {
+    currentCncSlide = 0;
+  }
+
+  updateCncCarousel();
+}
+
+function goToCncSlide(index) {
+  currentCncSlide = index;
+  updateCncCarousel();
+}
+
+function updateCncCarousel() {
+  const track = document.querySelector('.cnc-track');
+  const dots = document.querySelectorAll('.cnc-indicators .carousel-dot');
+
+  if (track) {
+    const offset = -currentCncSlide * 100;
+    track.style.transform = `translateX(${offset}%)`;
+  }
+
+  // Update dots
+  dots.forEach((dot, index) => {
+    if (index === currentCncSlide) {
+      dot.classList.add('active');
+    } else {
+      dot.classList.remove('active');
+    }
+  });
+}
+
 // Touch/Swipe Support for Carousels
 function addSwipeSupport() {
   // Add swipe to main carousel (page-3)
@@ -812,6 +950,12 @@ function addSwipeSupport() {
   const miscCarousel = document.querySelector('.misc-carousel');
   if (miscCarousel) {
     addSwipeListener(miscCarousel, moveMiscCarousel);
+  }
+
+  // Add swipe to cnc carousel (page-9)
+  const cncCarousel = document.querySelector('.cnc-carousel');
+  if (cncCarousel) {
+    addSwipeListener(cncCarousel, moveCncCarousel);
   }
 }
 
@@ -1304,6 +1448,7 @@ function addImageClickHandlers() {
     { container: '.archer-carousel', selector: '.archer-carousel' },
     { container: '.hadrian-carousel', selector: '.hadrian-carousel' },
     { container: '.kanban-carousel', selector: '.kanban-carousel' },
+    { container: '.cnc-carousel', selector: '.cnc-carousel' },
     { container: '.misc-carousel', selector: '.misc-carousel' }
   ];
 

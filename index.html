@@ -652,20 +652,48 @@ li:hover a.link-clean { text-decoration: underline; cursor: pointer; }
 
   <div id="page-9" class="page-container">
     <div>
-      <h1 class="c18"><span class="c4 c6">Machining Expertise</span></h1>
+      <h1 class="c18"><span class="c4 c6">Machining</span></h1>
       <p class="c17"><span class="c7 c12">Henry Wright</span></p>
     </div>
-    <h5 class="c3"><span class="c10 c4">CNC Machining Experience</span></h5>
-    <p class="c0"><span class="c7">Extensive hands-on experience with CNC mills and lathes, including setup, programming, and operation. Proficient in G-code programming and CAM software for efficient toolpath generation.</span></p>
 
-    <h5 class="c3"><span class="c10 c4">Design for Manufacturing (DFM)</span></h5>
-    <p class="c0"><span class="c7">Specialized in reviewing CAD models to provide DFM feedback, optimizing part geometry, manufacturing methodology, and tolerances to reduce cycle times and improve machinability.</span></p>
+    <p class="c0" style="font-size: 14pt; text-align: center; margin-top: 30px; margin-bottom: 30px;"><span class="c7">You've found the secret machining page! Here's a few more images of some parts I've machined.</span></p>
 
-    <h5 class="c3"><span class="c10 c4">Process Optimization</span></h5>
-    <p class="c0"><span class="c7">Developed and refined machining processes to streamline operations, reduce waste, and improve quality. Experience with tooling selection, fixture design, and workflow optimization.</span></p>
+    <!-- CNC Projects Tabs and Carousel -->
+    <div class="project-tabs">
+      <button class="project-tab active" onclick="switchCncProject('baja')">Baja</button>
+      <button class="project-tab" onclick="switchCncProject('rottweiler')">Rottweiler Performance</button>
+      <button class="project-tab" onclick="switchCncProject('misc')">Misc</button>
+    </div>
 
-    <h5 class="c3"><span class="c10 c4">Quality & Precision</span></h5>
-    <p class="c0"><span class="c7">Strong understanding of GD&T, tolerance analysis, and inspection methods. Committed to maintaining tight tolerances and high-quality standards in all machining operations.</span></p>
+    <!-- CNC Carousel -->
+    <div class="carousel-container cnc-carousel">
+      <div class="carousel-track cnc-track">
+        <img src="photos/cnc_photos/baja/1.jpg" alt="Baja 1" class="carousel-image">
+        <img src="photos/cnc_photos/baja/2.jpg" alt="Baja 2" class="carousel-image">
+        <img src="photos/cnc_photos/baja/3.jpg" alt="Baja 3" class="carousel-image">
+        <img src="photos/cnc_photos/baja/4.jpg" alt="Baja 4" class="carousel-image">
+        <img src="photos/cnc_photos/baja/5.jpg" alt="Baja 5" class="carousel-image">
+        <img src="photos/cnc_photos/baja/6.jpg" alt="Baja 6" class="carousel-image">
+        <img src="photos/cnc_photos/baja/7.jpg" alt="Baja 7" class="carousel-image">
+        <img src="photos/cnc_photos/baja/8.jpg" alt="Baja 8" class="carousel-image">
+        <img src="photos/cnc_photos/baja/9.jpg" alt="Baja 9" class="carousel-image">
+        <img src="photos/cnc_photos/baja/10.jpg" alt="Baja 10" class="carousel-image">
+      </div>
+      <button class="carousel-btn carousel-prev" onclick="moveCncCarousel(-1)">‹</button>
+      <button class="carousel-btn carousel-next" onclick="moveCncCarousel(1)">›</button>
+      <div class="carousel-indicators cnc-indicators">
+        <span class="carousel-dot active" onclick="goToCncSlide(0)"></span>
+        <span class="carousel-dot" onclick="goToCncSlide(1)"></span>
+        <span class="carousel-dot" onclick="goToCncSlide(2)"></span>
+        <span class="carousel-dot" onclick="goToCncSlide(3)"></span>
+        <span class="carousel-dot" onclick="goToCncSlide(4)"></span>
+        <span class="carousel-dot" onclick="goToCncSlide(5)"></span>
+        <span class="carousel-dot" onclick="goToCncSlide(6)"></span>
+        <span class="carousel-dot" onclick="goToCncSlide(7)"></span>
+        <span class="carousel-dot" onclick="goToCncSlide(8)"></span>
+        <span class="carousel-dot" onclick="goToCncSlide(9)"></span>
+      </div>
+    </div>
 
     <button class="go-home-btn" onclick="showPage('home')">Go Home</button>
   </div>
