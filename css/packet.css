@@ -538,10 +538,11 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     background: #ffffff;
     margin: 0;
     padding: 0;
-    overflow: hidden !important;
-    height: 100vh;
-    width: 100vw;
-    position: fixed;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    height: 100%;
+    width: 100%;
+    position: relative;
   }
 
   /* Make the page container full-width, fixed, and scrollable */
@@ -551,18 +552,19 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     left: 0 !important;
     right: 0 !important;
     bottom: 0 !important;
-    transform: none !important;
+    transform: translateX(0) !important;
     transform-origin: initial !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
     height: 100vh !important;
-    padding: 20px !important;
+    height: 100dvh !important;
+    padding: 20px 15px !important;
     margin: 0 !important;
     box-shadow: none !important;
     min-height: auto !important;
     background-color: #ffffff !important;
     box-sizing: border-box;
-    overflow-y: scroll !important;
+    overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
   }
@@ -594,66 +596,66 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     box-sizing: border-box;
   }
 
-  /* Slide left animation with fade */
+  /* Slide left animation - swipe left means page exits to left */
   .page-container.page-exit[data-exit-direction="left"] {
-    animation: mobilePageExitLeft 0.4s ease-in-out forwards !important;
+    animation: mobilePageExitLeft 0.35s cubic-bezier(0.4, 0.0, 0.2, 1) forwards !important;
   }
 
-  /* Slide right animation with fade */
+  /* Slide right animation - swipe right means page exits to right */
   .page-container.page-exit[data-exit-direction="right"] {
-    animation: mobilePageExitRight 0.4s ease-in-out forwards !important;
+    animation: mobilePageExitRight 0.35s cubic-bezier(0.4, 0.0, 0.2, 1) forwards !important;
   }
 
-  /* Page entering from left */
-  .page-container.active[data-enter-direction="left"] {
-    animation: mobilePageEnterLeft 0.4s ease-in-out forwards !important;
-  }
-
-  /* Page entering from right */
+  /* Page entering from right - when previous page exits left, new page comes from right */
   .page-container.active[data-enter-direction="right"] {
-    animation: mobilePageEnterRight 0.4s ease-in-out forwards !important;
+    animation: mobilePageEnterRight 0.35s cubic-bezier(0.4, 0.0, 0.2, 1) forwards !important;
+  }
+
+  /* Page entering from left - when previous page exits right, new page comes from left */
+  .page-container.active[data-enter-direction="left"] {
+    animation: mobilePageEnterLeft 0.35s cubic-bezier(0.4, 0.0, 0.2, 1) forwards !important;
   }
 
   @keyframes mobilePageExitLeft {
     0% {
-      transform: translateX(0);
+      transform: translateX(0) !important;
       opacity: 1;
     }
     100% {
-      transform: translateX(-100%);
-      opacity: 0.8;
+      transform: translateX(-100vw) !important;
+      opacity: 1;
     }
   }
 
   @keyframes mobilePageExitRight {
     0% {
-      transform: translateX(0);
+      transform: translateX(0) !important;
       opacity: 1;
     }
     100% {
-      transform: translateX(100%);
-      opacity: 0.8;
+      transform: translateX(100vw) !important;
+      opacity: 1;
     }
   }
 
   @keyframes mobilePageEnterLeft {
     0% {
-      transform: translateX(-100%);
-      opacity: 0.8;
+      transform: translateX(-100vw) !important;
+      opacity: 1;
     }
     100% {
-      transform: translateX(0);
+      transform: translateX(0) !important;
       opacity: 1;
     }
   }
 
   @keyframes mobilePageEnterRight {
     0% {
-      transform: translateX(100%);
-      opacity: 0.8;
+      transform: translateX(100vw) !important;
+      opacity: 1;
     }
     100% {
-      transform: translateX(0);
+      transform: translateX(0) !important;
       opacity: 1;
     }
   }
@@ -723,6 +725,32 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     margin-top: 15px;
     padding: 8px 16px;
     font-size: 10pt;
+  }
+
+  /* Adjust font sizes for better mobile readability */
+  body .page-container h1 {
+    font-size: 16pt !important;
+  }
+
+  body .page-container h5 {
+    font-size: 10pt !important;
+  }
+
+  body .page-container p,
+  body .page-container li,
+  body .page-container span {
+    font-size: 9pt !important;
+  }
+
+  body .page-container .c17 {
+    font-size: 8pt !important;
+  }
+}
+
+/* Prevent zoom on input focus on iOS */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
   }
 }
 

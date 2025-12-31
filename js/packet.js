@@ -14,6 +14,8 @@ function showPage(pageId, direction = 'forward') {
 
     if (isMobile) {
       // Set animation direction class
+      // When going backward (swipe right), page exits right and new page enters from left
+      // When going forward (swipe left), page exits left and new page enters from right
       if (direction === 'backward') {
         currentPage.setAttribute('data-exit-direction', 'right');
         newPage.setAttribute('data-enter-direction', 'left');
@@ -25,6 +27,11 @@ function showPage(pageId, direction = 'forward') {
       // Mobile: Show new page underneath first, then animate old page off
       newPage.style.display = 'block';
       newPage.classList.add('active');
+
+      // Reset any inline transform styles from swipe gesture
+      currentPage.style.transition = '';
+      currentPage.style.transform = '';
+      currentPage.style.willChange = '';
 
       // Small delay to ensure new page renders before animation starts
       setTimeout(() => {
@@ -39,7 +46,7 @@ function showPage(pageId, direction = 'forward') {
         newPage.removeAttribute('data-enter-direction');
         currentPage.style.display = '';
         window.scrollTo(0, 0);
-      }, 410);
+      }, 360);
     } else {
       // Desktop: Original behavior
       newPage.classList.add('active');
@@ -1184,32 +1191,21 @@ function addPageSwipeSupport() {
       // Trigger medium haptic feedback on successful swipe
       triggerHaptic('medium');
 
-      // Animate the current page out with momentum-based timing
+      // Reset inline styles immediately - let CSS animations handle it
       if (activePage) {
-        // Faster swipes = faster animation
-        const animationDuration = Math.max(0.15, Math.min(0.3, 0.3 - velocity * 0.2));
-        activePage.style.transition = `transform ${animationDuration}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
-        const exitDirection = deltaX < 0 ? '-100%' : '100%';
-        activePage.style.transform = `translateX(${exitDirection})`;
+        activePage.style.transition = '';
+        activePage.style.transform = '';
+        activePage.style.willChange = '';
       }
 
-      // Navigate with minimal delay for ultra-smooth feel
-      setTimeout(() => {
-        if (deltaX < 0) {
-          // Swipe left - next page
-          nextPage();
-        } else {
-          // Swipe right - previous page
-          previousPage();
-        }
-
-        // Reset the page style
-        if (activePage) {
-          activePage.style.transition = '';
-          activePage.style.transform = '';
-          activePage.style.willChange = '';
-        }
-      }, 50);
+      // Navigate immediately - showPage will handle the animation
+      if (deltaX < 0) {
+        // Swipe left - next page (forward direction)
+        nextPage();
+      } else {
+        // Swipe right - previous page (backward direction)
+        previousPage();
+      }
     } else {
       // Snap back to original position with elastic ease
       if (activePage) {
