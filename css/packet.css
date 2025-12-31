@@ -556,13 +556,13 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    padding: 20px 16px 70px 16px;
+    width: 100vw;
+    height: 100vh;
+    padding: 16px 14px 80px 14px;
     margin: 0;
     box-sizing: border-box;
     background-color: #ffffff;
-    overflow-y: auto;
+    overflow-y: scroll;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     box-shadow: none;
@@ -642,48 +642,54 @@ li, .project-tab, .carousel-btn, .go-home-btn {
   }
 
   /* Typography adjustments for mobile */
+  body .page-container * {
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
   body .page-container h1 {
-    font-size: 20px;
+    font-size: 22px;
     line-height: 1.2;
-    margin: 0 0 8px 0;
+    margin: 0 0 6px 0;
     padding: 0;
   }
 
   body .page-container h5 {
-    font-size: 13px;
-    margin: 16px 0 8px 0;
-    padding-bottom: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 14px 0 6px 0;
+    padding-bottom: 2px;
   }
 
   body .page-container p {
-    font-size: 11px;
-    line-height: 1.4;
-    margin: 4px 0;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    hyphens: auto;
+    font-size: 12px;
+    line-height: 1.45;
+    margin: 3px 0;
   }
 
   body .page-container li {
-    font-size: 11px;
-    line-height: 1.4;
-    margin: 6px 0;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-
-  body .page-container span {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    font-size: 12px;
+    line-height: 1.45;
+    margin: 5px 0;
   }
 
   body .page-container .c17 {
-    font-size: 10px;
+    font-size: 11px;
     text-align: center;
+    line-height: 1.3;
   }
 
   body .page-container .c12 {
-    font-size: 10px;
+    font-size: 11px;
+  }
+
+  body .page-container .c4 {
+    font-weight: bold;
+  }
+
+  body .page-container .c7 {
+    font-weight: normal;
   }
 
   /* Remove all floats on mobile - they cause clipping */
@@ -696,12 +702,18 @@ li, .project-tab, .carousel-btn, .go-home-btn {
 
   /* Fix list spacing */
   body .page-container ul {
-    margin: 8px 0 12px 0;
-    padding-left: 20px;
+    margin: 6px 0 10px 0;
+    padding-left: 18px;
+    list-style-position: outside;
   }
 
   body .page-container .c1 {
-    margin-left: 20px;
+    margin-left: 18px;
+    padding-left: 0;
+  }
+
+  body .page-container li {
+    padding-left: 4px;
   }
 
   /* Carousel adjustments */
@@ -786,13 +798,34 @@ li, .project-tab, .carousel-btn, .go-home-btn {
   /* Adjust header spacing */
   body .page-container .c18 {
     padding-top: 0;
-    margin-bottom: 8px;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #000;
   }
 
   body .page-container .c3 {
-    padding-top: 8px;
-    padding-bottom: 4px;
-    margin: 12px 0 8px 0;
+    padding-top: 6px;
+    padding-bottom: 3px;
+    margin: 12px 0 6px 0;
+    border-bottom: 1px solid #000;
+  }
+
+  /* Fix paragraph spacing */
+  body .page-container .c0 {
+    margin: 6px 0;
+    padding: 0;
+  }
+
+  body .page-container .c16 {
+    margin: 2px 0;
+    padding: 0;
+  }
+
+  /* Ensure proper line breaks */
+  body .page-container br {
+    display: block;
+    content: "";
+    margin: 2px 0;
   }
 }
 
