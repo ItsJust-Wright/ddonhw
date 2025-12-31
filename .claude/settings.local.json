@@ -9,7 +9,8 @@
       "Bash(for:*)",
       "Bash(do echo \"Converting $i.jpeg...\")",
       "Bash(sips:*)",
-      "Bash(do mv \"$i_converted.jpeg\" \"$i.jpeg\")"
+      "Bash(do mv \"$i_converted.jpeg\" \"$i.jpeg\")",
+      "Bash(node -c:*)"
     ],
     "deny": [],
     "ask": []

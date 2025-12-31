@@ -174,6 +174,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize mobile navigation bar
   initMobileNavBar();
 
+  // Also update on resize
+  window.addEventListener('resize', function() {
+    updateMobileNavButtons();
+  });
+
   // Add image click handlers for modal (desktop only)
   setTimeout(addImageClickHandlers, 500);
 
@@ -1072,6 +1077,9 @@ function initMobileNavBar() {
   // Only create on mobile devices
   if (window.innerWidth > 768) return;
 
+  // Check if nav bar already exists
+  if (document.querySelector('.mobile-nav-bar')) return;
+
   // Create navigation bar
   const navBar = document.createElement('div');
   navBar.className = 'mobile-nav-bar';
@@ -1087,8 +1095,10 @@ function initMobileNavBar() {
   document.getElementById('mobile-home-btn').addEventListener('click', () => showPage('home'));
   document.getElementById('mobile-next-btn').addEventListener('click', nextPage);
 
-  // Initial button state
-  updateMobileNavButtons();
+  // Initial button state - hide on home page
+  setTimeout(() => {
+    updateMobileNavButtons();
+  }, 100);
 }
 
 // Update mobile navigation button states

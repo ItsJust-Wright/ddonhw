@@ -556,10 +556,12 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 100vw !important;
     height: 100vh;
-    padding: 16px 14px 20px 14px;
-    margin: 0;
+    padding: 16px 14px 20px 14px !important;
+    margin: 0 !important;
     box-sizing: border-box;
     background-color: #ffffff;
     overflow-y: auto;
@@ -842,10 +844,15 @@ li, .project-tab, .carousel-btn, .go-home-btn {
 
   /* Override the .c2 container fixed width on mobile */
   body .page-container > div,
-  body .page-container .c2 {
+  body .page-container .c2,
+  body .page-container div {
     max-width: 100% !important;
-    width: 100% !important;
+    width: auto !important;
     min-width: 0 !important;
+  }
+
+  /* Reset all padding and margins that could cause overflow */
+  body .page-container > div:first-child {
     padding: 0 !important;
     margin: 0 !important;
   }
