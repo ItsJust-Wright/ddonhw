@@ -206,17 +206,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Add click handlers to "Henry Wright" headers to navigate to About Me page
-  const henryWrightHeaders = document.querySelectorAll('.c18 .c4.c6');
-  henryWrightHeaders.forEach(header => {
-    if (header.textContent.trim() === 'Henry Wright') {
-      header.style.cursor = 'pointer';
-      header.addEventListener('click', function(e) {
-        e.preventDefault();
-        showPage(10);
-      });
-    }
-  });
 });
 
 // Carousel functionality
@@ -738,51 +727,6 @@ function updateKanbanCarousel() {
   });
 }
 
-// Misc Carousel (About Me page)
-let currentMiscSlide = 0;
-
-function moveMiscCarousel(direction) {
-  const track = document.querySelector('.misc-track');
-  const allSlides = track.children;
-  const totalSlides = allSlides.length;
-
-  currentMiscSlide += direction;
-
-  // Loop around
-  if (currentMiscSlide < 0) {
-    currentMiscSlide = totalSlides - 1;
-  } else if (currentMiscSlide >= totalSlides) {
-    currentMiscSlide = 0;
-  }
-
-  updateMiscCarousel();
-  loadAdjacentImages('.misc-track', currentMiscSlide);
-}
-
-function goToMiscSlide(index) {
-  currentMiscSlide = index;
-  updateMiscCarousel();
-  loadAdjacentImages('.misc-track', currentMiscSlide);
-}
-
-function updateMiscCarousel() {
-  const track = document.querySelector('.misc-track');
-  const dots = document.querySelectorAll('.misc-indicators .carousel-dot');
-
-  if (track) {
-    const offset = -currentMiscSlide * 100;
-    track.style.transform = `translateX(${offset}%)`;
-  }
-
-  // Update dots
-  dots.forEach((dot, index) => {
-    if (index === currentMiscSlide) {
-      dot.classList.add('active');
-    } else {
-      dot.classList.remove('active');
-    }
-  });
-}
 
 // CNC Carousel (Machining page)
 let currentCncSlide = 0;
@@ -956,12 +900,6 @@ function addSwipeSupport() {
   const kanbanCarousel = document.querySelector('.kanban-carousel');
   if (kanbanCarousel) {
     addSwipeListener(kanbanCarousel, moveKanbanCarousel);
-  }
-
-  // Add swipe to misc carousel (page-10)
-  const miscCarousel = document.querySelector('.misc-carousel');
-  if (miscCarousel) {
-    addSwipeListener(miscCarousel, moveMiscCarousel);
   }
 
   // Add swipe to cnc carousel (page-9)
@@ -1350,8 +1288,7 @@ function addImageClickHandlers() {
     { container: '.archer-carousel', selector: '.archer-carousel' },
     { container: '.hadrian-carousel', selector: '.hadrian-carousel' },
     { container: '.kanban-carousel', selector: '.kanban-carousel' },
-    { container: '.cnc-carousel', selector: '.cnc-carousel' },
-    { container: '.misc-carousel', selector: '.misc-carousel' }
+    { container: '.cnc-carousel', selector: '.cnc-carousel' }
   ];
 
   carouselMap.forEach(({ container, selector }) => {
