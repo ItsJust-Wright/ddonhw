@@ -1043,7 +1043,7 @@ function triggerHaptic(style = 'light') {
     // Define vibration patterns
     const patterns = {
       light: 10,
-      medium: 25,
+      medium: 30,
       heavy: 50
     };
 
@@ -1052,23 +1052,32 @@ function triggerHaptic(style = 'light') {
     // Try vibrate API (works on most Android and some iOS)
     if (navigator.vibrate) {
       navigator.vibrate(duration);
-      return;
+      return true;
     }
 
     // Fallback for older browsers
     if (navigator.webkitVibrate) {
       navigator.webkitVibrate(duration);
-      return;
+      return true;
     }
 
-    // iOS 13+ Haptic Engine (via webkit)
+    // Try the Vibration API with error handling
+    if ('vibrate' in navigator) {
+      navigator.vibrate(duration);
+      return true;
+    }
+
+    // iOS 13+ Haptic Engine (via webkit) - typically doesn't work from web
     if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.haptic) {
       window.webkit.messageHandlers.haptic.postMessage(style);
-      return;
+      return true;
     }
+
+    return false;
   } catch (e) {
     // Silently fail if vibration not supported
     console.log('Haptic feedback not supported on this device');
+    return false;
   }
 }
 
@@ -1126,52 +1135,15 @@ function addPageSwipeSupport() {
 
       // Prevent scrolling during horizontal swipe
       e.preventDefault();
-
-      // Add visual feedback with ultra-smooth movement
-      const activePage = document.querySelector('.page-container.active');
-      if (activePage) {
-        // Use requestAnimationFrame for 60fps smoothness
-        requestAnimationFrame(() => {
-          // Exponential resistance curve for natural feel
-          const screenWidth = window.innerWidth;
-          const progress = Math.abs(deltaX) / screenWidth;
-          const resistance = 1 - Math.pow(progress, 1.5) * 0.6;
-          const dragAmount = deltaX * resistance * 0.7;
-
-          activePage.style.transition = 'none';
-          activePage.style.transform = `translateX(${dragAmount}px)`;
-          activePage.style.willChange = 'transform';
-        });
-      }
     } else if (isSwiping) {
       e.preventDefault();
-
-      // Continue updating visual feedback with buttery smooth animation
-      const activePage = document.querySelector('.page-container.active');
-      if (activePage) {
-        requestAnimationFrame(() => {
-          const screenWidth = window.innerWidth;
-          const progress = Math.abs(deltaX) / screenWidth;
-          const resistance = 1 - Math.pow(progress, 1.5) * 0.6;
-          const dragAmount = deltaX * resistance * 0.7;
-
-          activePage.style.transform = `translateX(${dragAmount}px)`;
-        });
-      }
     }
   }, { passive: false });
 
   body.addEventListener('touchend', function(e) {
     if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a, button')) return;
 
-    const activePage = document.querySelector('.page-container.active');
-
     if (!isSwiping) {
-      if (activePage) {
-        activePage.style.transition = '';
-        activePage.style.transform = '';
-        activePage.style.willChange = '';
-      }
       return;
     }
 
@@ -1191,13 +1163,6 @@ function addPageSwipeSupport() {
       // Trigger medium haptic feedback on successful swipe
       triggerHaptic('medium');
 
-      // Reset inline styles immediately - let CSS animations handle it
-      if (activePage) {
-        activePage.style.transition = '';
-        activePage.style.transform = '';
-        activePage.style.willChange = '';
-      }
-
       // Navigate immediately - showPage will handle the animation
       if (deltaX < 0) {
         // Swipe left - next page (forward direction)
@@ -1205,18 +1170,6 @@ function addPageSwipeSupport() {
       } else {
         // Swipe right - previous page (backward direction)
         previousPage();
-      }
-    } else {
-      // Snap back to original position with elastic ease
-      if (activePage) {
-        activePage.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        activePage.style.transform = 'translateX(0)';
-
-        setTimeout(() => {
-          activePage.style.transition = '';
-          activePage.style.transform = '';
-          activePage.style.willChange = '';
-        }, 350);
       }
     }
 
@@ -1226,17 +1179,6 @@ function addPageSwipeSupport() {
 
   // Cancel swipe on touch cancel
   body.addEventListener('touchcancel', function() {
-    const activePage = document.querySelector('.page-container.active');
-    if (activePage) {
-      activePage.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)';
-      activePage.style.transform = 'translateX(0)';
-
-      setTimeout(() => {
-        activePage.style.transition = '';
-        activePage.style.transform = '';
-        activePage.style.willChange = '';
-      }, 300);
-    }
     isSwiping = false;
     swipeDirection = null;
   }, { passive: true });
