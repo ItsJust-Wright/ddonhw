@@ -1099,21 +1099,18 @@ function updateMobileNavButtons() {
   if (!currentPage) return;
 
   const currentId = currentPage.id;
+  const navBar = document.querySelector('.mobile-nav-bar');
   const prevBtn = document.getElementById('mobile-prev-btn');
   const nextBtn = document.getElementById('mobile-next-btn');
   const homeBtn = document.getElementById('mobile-home-btn');
 
-  if (!prevBtn || !nextBtn || !homeBtn) return;
+  if (!navBar || !prevBtn || !nextBtn || !homeBtn) return;
 
-  // Define page order
-  const pageOrder = ['home-page', 'page-1', 'page-2', 'page-3', 'page-4', 'page-5', 'page-6', 'page-7', 'page-8'];
-  const currentIndex = pageOrder.indexOf(currentId);
-
-  // Disable home button if already on home
+  // Hide navigation bar on home page, show on detail pages
   if (currentId === 'home-page') {
-    homeBtn.disabled = true;
+    navBar.classList.add('hidden');
   } else {
-    homeBtn.disabled = false;
+    navBar.classList.remove('hidden');
   }
 
   // Always enable prev/next buttons (they loop)
