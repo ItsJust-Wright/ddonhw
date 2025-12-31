@@ -13,40 +13,30 @@ function showPage(pageId, direction = 'forward') {
     const isMobile = window.innerWidth <= 768;
 
     if (isMobile) {
-      // Set animation direction class
-      // When going backward (swipe right), page exits right and new page enters from left
-      // When going forward (swipe left), page exits left and new page enters from right
+      // Mobile: Tinder-style swipe animations
       if (direction === 'backward') {
+        // Swipe right - current page exits right, new page enters from left
         currentPage.setAttribute('data-exit-direction', 'right');
         newPage.setAttribute('data-enter-direction', 'left');
       } else {
+        // Swipe left - current page exits left, new page enters from right
         currentPage.setAttribute('data-exit-direction', 'left');
         newPage.setAttribute('data-enter-direction', 'right');
       }
 
-      // Mobile: Show new page underneath first, then animate old page off
-      newPage.style.display = 'block';
+      // Show new page and start animations
       newPage.classList.add('active');
+      currentPage.classList.add('page-exit');
+      currentPage.classList.remove('active');
 
-      // Reset any inline transform styles from swipe gesture
-      currentPage.style.transition = '';
-      currentPage.style.transform = '';
-      currentPage.style.willChange = '';
-
-      // Small delay to ensure new page renders before animation starts
-      setTimeout(() => {
-        currentPage.classList.add('page-exit');
-        currentPage.classList.remove('active');
-      }, 10);
-
-      // Clean up after animation completes
+      // Clean up after animation
       setTimeout(() => {
         currentPage.classList.remove('page-exit');
         currentPage.removeAttribute('data-exit-direction');
         newPage.removeAttribute('data-enter-direction');
-        currentPage.style.display = '';
-        window.scrollTo(0, 0);
-      }, 360);
+        // Scroll new page to top
+        newPage.scrollTop = 0;
+      }, 300);
     } else {
       // Desktop: Original behavior
       newPage.classList.add('active');
@@ -61,7 +51,11 @@ function showPage(pageId, direction = 'forward') {
   } else if (!currentPage) {
     // If no current page, just show the requested page
     newPage.classList.add('active');
-    window.scrollTo(0, 0);
+    if (window.innerWidth <= 768 && newPage.scrollTop !== undefined) {
+      newPage.scrollTop = 0;
+    } else {
+      window.scrollTo(0, 0);
+    }
   }
 }
 
@@ -1081,106 +1075,82 @@ function triggerHaptic(style = 'light') {
   }
 }
 
-// Page swipe navigation for mobile with refined gestures and haptics
+// Page swipe navigation for mobile - Tinder style
 function addPageSwipeSupport() {
   // Only add on mobile devices
   if (window.innerWidth > 768) return;
 
-  const body = document.body;
   let touchStartX = 0;
   let touchStartY = 0;
-  let touchCurrentX = 0;
-  let touchCurrentY = 0;
-  let touchStartTime = 0;
+  let touchEndX = 0;
+  let touchEndY = 0;
   let isSwiping = false;
-  let swipeDirection = null;
-  let hasTriggeredHaptic = false;
-  const minSwipeDistance = 50; // Easier triggering
-  const swipeThreshold = 15; // Very low threshold for instant feedback
-  const velocityThreshold = 0.4; // Minimum velocity for quick swipes
+  const minSwipeDistance = 60;
 
-  body.addEventListener('touchstart', function(e) {
-    // Don't trigger page swipe if touching a carousel or interactive element
-    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a, button')) return;
+  document.addEventListener('touchstart', function(e) {
+    // Ignore if touching interactive elements
+    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a, button')) {
+      return;
+    }
 
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
-    touchCurrentX = touchStartX;
-    touchCurrentY = touchStartY;
-    touchStartTime = Date.now();
     isSwiping = false;
-    swipeDirection = null;
-    hasTriggeredHaptic = false;
   }, { passive: true });
 
-  body.addEventListener('touchmove', function(e) {
-    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a, button')) return;
+  document.addEventListener('touchmove', function(e) {
+    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a, button')) {
+      return;
+    }
 
-    touchCurrentX = e.touches[0].clientX;
-    touchCurrentY = e.touches[0].clientY;
+    const touchX = e.touches[0].clientX;
+    const touchY = e.touches[0].clientY;
+    const deltaX = touchX - touchStartX;
+    const deltaY = touchY - touchStartY;
 
-    const deltaX = touchCurrentX - touchStartX;
-    const deltaY = touchCurrentY - touchStartY;
-
-    // Determine if this is a horizontal swipe (must be 2x more horizontal than vertical)
-    if (!isSwiping && Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY) * 2) {
+    // Detect horizontal swipe (more horizontal than vertical)
+    if (!isSwiping && Math.abs(deltaX) > 20 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
       isSwiping = true;
-      swipeDirection = deltaX > 0 ? 'right' : 'left';
-
-      // Trigger light haptic feedback when swipe starts
-      if (!hasTriggeredHaptic) {
-        triggerHaptic('light');
-        hasTriggeredHaptic = true;
-      }
-
-      // Prevent scrolling during horizontal swipe
+      triggerHaptic('light');
       e.preventDefault();
     } else if (isSwiping) {
       e.preventDefault();
     }
   }, { passive: false });
 
-  body.addEventListener('touchend', function(e) {
-    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a, button')) return;
+  document.addEventListener('touchend', function(e) {
+    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a, button')) {
+      return;
+    }
 
     if (!isSwiping) {
       return;
     }
 
-    const deltaX = touchCurrentX - touchStartX;
-    const deltaY = touchCurrentY - touchStartY;
-    const swipeTime = Date.now() - touchStartTime;
+    touchEndX = e.changedTouches[0].clientX;
+    touchEndY = e.changedTouches[0].clientY;
 
-    // Calculate actual velocity (pixels per millisecond)
-    const velocity = Math.abs(deltaX) / swipeTime;
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
 
-    // Check if swipe was long enough OR fast enough, and predominantly horizontal
-    const isLongSwipe = Math.abs(deltaX) > minSwipeDistance;
-    const isFastSwipe = velocity > velocityThreshold && Math.abs(deltaX) > 30;
-    const isHorizontal = Math.abs(deltaX) > Math.abs(deltaY) * 1.2;
-
-    if ((isLongSwipe || isFastSwipe) && isHorizontal) {
-      // Trigger medium haptic feedback on successful swipe
+    // Check if swipe was long enough and horizontal
+    if (Math.abs(deltaX) > minSwipeDistance && Math.abs(deltaX) > Math.abs(deltaY)) {
       triggerHaptic('medium');
 
-      // Navigate immediately - showPage will handle the animation
       if (deltaX < 0) {
-        // Swipe left - next page (forward direction)
+        // Swiped left - go to next page
         nextPage();
       } else {
-        // Swipe right - previous page (backward direction)
+        // Swiped right - go to previous page
         previousPage();
       }
     }
 
     isSwiping = false;
-    swipeDirection = null;
   }, { passive: true });
 
-  // Cancel swipe on touch cancel
-  body.addEventListener('touchcancel', function() {
+  document.addEventListener('touchcancel', function() {
     isSwiping = false;
-    swipeDirection = null;
   }, { passive: true });
 }
 

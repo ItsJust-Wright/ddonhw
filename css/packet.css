@@ -531,148 +531,186 @@ li, .project-tab, .carousel-btn, .go-home-btn {
   }
 }
 
-/* ===== MOBILE RESPONSIVE STYLES ===== */
+/* ===== MOBILE RESPONSIVE STYLES - REWRITTEN FROM SCRATCH ===== */
 @media screen and (max-width: 768px) {
-  /* Remove the gray background on mobile and disable scrolling */
-  html, body {
-    background: #ffffff;
+  /* Clean reset for mobile */
+  html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+  }
+
+  body {
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    height: 100%;
-    width: 100%;
-    position: relative;
+    overflow: hidden;
+    position: fixed;
+    background: #ffffff;
   }
 
-  /* Make the page container full-width, fixed, and scrollable */
+  /* Page container - Tinder-style cards */
   body .page-container {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
-    height: 100vh !important;
-    height: 100dvh !important;
-    padding: 15px 12px 60px 12px !important;
-    margin: 0 !important;
-    box-shadow: none !important;
-    min-height: auto !important;
-    background-color: #ffffff !important;
-    box-sizing: border-box !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px 16px 70px 16px;
+    margin: 0;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-  }
-
-  .page-container.active {
-    display: block !important;
-    position: fixed !important;
-    z-index: 10;
-  }
-
-  /* Don't override transform on active pages that are animating in */
-  .page-container.active:not([data-enter-direction]) {
-    transform: translateX(0) !important;
-  }
-
-  /* Hide non-active pages */
-  .page-container:not(.active):not(.page-exit) {
-    display: none !important;
-  }
-
-  /* Page animations for mobile - all pages are fixed and overlay */
-  .page-container.page-exit {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    z-index: 20;
-    overflow: hidden !important;
-    padding: 15px 12px 60px 12px !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Slide left animation - swipe left means page exits to left */
-  .page-container.page-exit[data-exit-direction="left"] {
-    animation: mobilePageExitLeft 0.35s cubic-bezier(0.4, 0.0, 0.2, 1) forwards !important;
-  }
-
-  /* Slide right animation - swipe right means page exits to right */
-  .page-container.page-exit[data-exit-direction="right"] {
-    animation: mobilePageExitRight 0.35s cubic-bezier(0.4, 0.0, 0.2, 1) forwards !important;
-  }
-
-  /* Page entering from right - when previous page exits left, new page comes from right */
-  .page-container.active[data-enter-direction="right"] {
-    animation: mobilePageEnterRight 0.35s cubic-bezier(0.4, 0.0, 0.2, 1) forwards !important;
-  }
-
-  /* Page entering from left - when previous page exits right, new page comes from left */
-  .page-container.active[data-enter-direction="left"] {
-    animation: mobilePageEnterLeft 0.35s cubic-bezier(0.4, 0.0, 0.2, 1) forwards !important;
-  }
-
-  @keyframes mobilePageExitLeft {
-    0% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    100% {
-      transform: translateX(-100vw);
-      opacity: 1;
-    }
-  }
-
-  @keyframes mobilePageExitRight {
-    0% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    100% {
-      transform: translateX(100vw);
-      opacity: 1;
-    }
-  }
-
-  @keyframes mobilePageEnterLeft {
-    0% {
-      transform: translateX(-100vw);
-      opacity: 1;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-
-  @keyframes mobilePageEnterRight {
-    0% {
-      transform: translateX(100vw);
-      opacity: 1;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-
-  /* Hide page curl on mobile */
-  .page-curl {
+    box-shadow: none;
+    transform: translateX(0);
+    transition: none;
     display: none;
   }
 
-  /* Make carousels responsive */
+  /* Active page is visible and on top */
+  .page-container.active {
+    display: block;
+    z-index: 100;
+  }
+
+  /* Exiting page sits on top during animation */
+  .page-container.page-exit {
+    display: block;
+    z-index: 200;
+    overflow: hidden;
+  }
+
+  /* Swipe left - page slides out to the left */
+  .page-container.page-exit[data-exit-direction="left"] {
+    animation: swipeOutLeft 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  }
+
+  /* Swipe right - page slides out to the right */
+  .page-container.page-exit[data-exit-direction="right"] {
+    animation: swipeOutRight 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  }
+
+  /* New page enters from right when swiping left */
+  .page-container.active[data-enter-direction="right"] {
+    animation: swipeInFromRight 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  }
+
+  /* New page enters from left when swiping right */
+  .page-container.active[data-enter-direction="left"] {
+    animation: swipeInFromLeft 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  }
+
+  /* Animation keyframes */
+  @keyframes swipeOutLeft {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes swipeOutRight {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes swipeInFromRight {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes swipeInFromLeft {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  /* Typography adjustments for mobile */
+  body .page-container h1 {
+    font-size: 20px;
+    line-height: 1.2;
+    margin: 0 0 8px 0;
+    padding: 0;
+  }
+
+  body .page-container h5 {
+    font-size: 13px;
+    margin: 16px 0 8px 0;
+    padding-bottom: 4px;
+  }
+
+  body .page-container p {
+    font-size: 11px;
+    line-height: 1.4;
+    margin: 4px 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  body .page-container li {
+    font-size: 11px;
+    line-height: 1.4;
+    margin: 6px 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  body .page-container span {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  body .page-container .c17 {
+    font-size: 10px;
+    text-align: center;
+  }
+
+  body .page-container .c12 {
+    font-size: 10px;
+  }
+
+  /* Remove all floats on mobile - they cause clipping */
+  body .page-container .c21 {
+    float: none;
+    display: inline;
+    margin: 0;
+    background: transparent;
+  }
+
+  /* Fix list spacing */
+  body .page-container ul {
+    margin: 8px 0 12px 0;
+    padding-left: 20px;
+  }
+
+  body .page-container .c1 {
+    margin-left: 20px;
+  }
+
+  /* Carousel adjustments */
   .carousel-container {
+    width: 100%;
     max-width: 100%;
     height: auto;
     aspect-ratio: 1;
-    margin: 15px 0;
+    margin: 12px 0;
   }
 
   .carousel-image {
@@ -683,87 +721,78 @@ li, .project-tab, .carousel-btn, .go-home-btn {
   .carousel-text-card {
     width: 100%;
     height: 100%;
-    padding: 40px 20px;
+    padding: 30px 20px;
   }
 
-  /* Adjust tabs for mobile */
   .project-tabs {
+    width: 100%;
     max-width: 100%;
-    margin: 15px 0 0 0;
+    margin: 12px 0 0 0;
   }
 
   .project-tab {
-    font-size: 12px;
-    padding: 8px 12px;
+    font-size: 11px;
+    padding: 8px 10px;
   }
 
-  /* Adjust carousel buttons for mobile */
   .carousel-btn {
-    font-size: 24px;
-    padding: 8px 12px;
+    font-size: 20px;
+    padding: 6px 10px;
   }
 
   .carousel-prev {
-    left: 5px;
+    left: 4px;
   }
 
   .carousel-next {
-    right: 5px;
+    right: 4px;
   }
 
-  /* Adjust indicators for mobile */
   .carousel-indicators {
-    bottom: 10px;
-    gap: 6px;
+    bottom: 8px;
+    gap: 5px;
   }
 
   .carousel-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
   }
 
-  /* Adjust go home button for mobile */
+  /* Go home button */
   .go-home-btn {
-    margin-top: 15px;
-    padding: 8px 16px;
-    font-size: 10pt;
+    display: block;
+    width: 100%;
+    max-width: 200px;
+    margin: 16px auto;
+    padding: 10px 20px;
+    font-size: 14px;
+    text-align: center;
   }
 
-  /* Adjust font sizes for better mobile readability */
-  body .page-container h1 {
-    font-size: 16pt !important;
+  /* Hide page curl on mobile */
+  .page-curl {
+    display: none;
   }
 
-  body .page-container h5 {
-    font-size: 10pt !important;
-  }
-
-  body .page-container p,
-  body .page-container li,
-  body .page-container span {
-    font-size: 9pt !important;
-    word-wrap: break-word !important;
-    overflow-wrap: break-word !important;
-  }
-
-  body .page-container .c17 {
-    font-size: 8pt !important;
-  }
-
-  /* Fix the floating badges that cause clipping */
-  body .page-container .c21 {
-    float: none !important;
-    display: block !important;
-    margin-left: 0 !important;
-    margin-top: 2px !important;
-  }
-
-  /* Ensure paragraphs don't overflow */
+  /* Ensure all content is visible */
   body .page-container .c16,
-  body .page-container .c0 {
-    max-width: 100% !important;
-    overflow-wrap: break-word !important;
-    word-wrap: break-word !important;
+  body .page-container .c0,
+  body .page-container .c11 {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  /* Adjust header spacing */
+  body .page-container .c18 {
+    padding-top: 0;
+    margin-bottom: 8px;
+  }
+
+  body .page-container .c3 {
+    padding-top: 8px;
+    padding-bottom: 4px;
+    margin: 12px 0 8px 0;
   }
 }
 
