@@ -531,7 +531,7 @@ li, .project-tab, .carousel-btn, .go-home-btn {
   }
 }
 
-/* ===== MOBILE RESPONSIVE STYLES - REWRITTEN FROM SCRATCH ===== */
+/* ===== MOBILE RESPONSIVE STYLES - VERTICAL SCROLL WITH BUTTON NAVIGATION ===== */
 @media screen and (max-width: 768px) {
   /* Clean reset for mobile */
   html {
@@ -551,93 +551,58 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     background: #ffffff;
   }
 
-  /* Page container - Tinder-style cards */
+  /* Page container - Vertically scrollable pages */
   body .page-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
-    padding: 16px 14px 80px 14px;
+    height: calc(100vh - 70px);
+    padding: 16px 14px 20px 14px;
     margin: 0;
     box-sizing: border-box;
     background-color: #ffffff;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     box-shadow: none;
-    transform: translateX(0);
+    transform: none;
     transition: none;
     display: none;
   }
 
-  /* Active page is visible and on top */
+  /* Active page is visible */
   .page-container.active {
     display: block;
     z-index: 100;
   }
 
-  /* Exiting page sits on top during animation */
+  /* Fade transitions for page changes */
   .page-container.page-exit {
     display: block;
-    z-index: 200;
-    overflow: hidden;
+    z-index: 50;
+    animation: fadeOut 0.2s ease-out forwards;
   }
 
-  /* Swipe left - page slides out to the left */
-  .page-container.page-exit[data-exit-direction="left"] {
-    animation: swipeOutLeft 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  .page-container.page-enter {
+    animation: fadeIn 0.2s ease-in forwards;
   }
 
-  /* Swipe right - page slides out to the right */
-  .page-container.page-exit[data-exit-direction="right"] {
-    animation: swipeOutRight 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
-  }
-
-  /* New page enters from right when swiping left */
-  .page-container.active[data-enter-direction="right"] {
-    animation: swipeInFromRight 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
-  }
-
-  /* New page enters from left when swiping right */
-  .page-container.active[data-enter-direction="left"] {
-    animation: swipeInFromLeft 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
-  }
-
-  /* Animation keyframes */
-  @keyframes swipeOutLeft {
+  @keyframes fadeOut {
     from {
-      transform: translateX(0);
+      opacity: 1;
     }
     to {
-      transform: translateX(-100%);
+      opacity: 0;
     }
   }
 
-  @keyframes swipeOutRight {
+  @keyframes fadeIn {
     from {
-      transform: translateX(0);
+      opacity: 0;
     }
     to {
-      transform: translateX(100%);
-    }
-  }
-
-  @keyframes swipeInFromRight {
-    from {
-      transform: translateX(100%);
-    }
-    to {
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes swipeInFromLeft {
-    from {
-      transform: translateX(-100%);
-    }
-    to {
-      transform: translateX(0);
+      opacity: 1;
     }
   }
 
@@ -728,6 +693,7 @@ li, .project-tab, .carousel-btn, .go-home-btn {
   .carousel-image {
     width: 100%;
     height: 100%;
+    cursor: pointer;
   }
 
   .carousel-text-card {
@@ -770,20 +736,78 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     height: 7px;
   }
 
-  /* Go home button */
+  /* Go home button - hide it, replaced by navigation bar */
   .go-home-btn {
-    display: block;
-    width: 100%;
-    max-width: 200px;
-    margin: 16px auto;
-    padding: 10px 20px;
-    font-size: 14px;
-    text-align: center;
+    display: none;
   }
 
   /* Hide page curl on mobile */
   .page-curl {
     display: none;
+  }
+
+  /* Mobile Navigation Bar */
+  .mobile-nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background-color: #ffffff;
+    border-top: 1px solid #d2d2d7;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-nav-btn {
+    flex: 1;
+    max-width: 120px;
+    height: 50px;
+    background-color: #f5f5f7;
+    border: 1px solid #d2d2d7;
+    border-radius: 12px;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: #1d1d1f;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    touch-action: manipulation;
+  }
+
+  .mobile-nav-btn:active {
+    background-color: #e8e8ed;
+    transform: scale(0.96);
+  }
+
+  .mobile-nav-btn.home-btn {
+    background-color: #007aff;
+    color: #ffffff;
+    border-color: #007aff;
+    font-size: 16px;
+    max-width: 100px;
+  }
+
+  .mobile-nav-btn.home-btn:active {
+    background-color: #0051d5;
+  }
+
+  .mobile-nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .mobile-nav-btn:disabled:active {
+    transform: none;
   }
 
   /* Ensure all content is visible */
@@ -826,6 +850,133 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     display: block;
     content: "";
     margin: 2px 0;
+  }
+
+  /* Mobile Image Modal */
+  .image-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+  }
+
+  .image-modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .image-modal-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .image-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #ffffff;
+    font-size: 40px;
+    font-weight: 300;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10002;
+    line-height: 1;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .image-modal-close:active {
+    color: #cccccc;
+  }
+
+  .image-modal-carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .image-modal-track {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    transition: transform 0.3s ease-out;
+    will-change: transform;
+  }
+
+  .image-modal-track img {
+    width: 100%;
+    min-width: 100%;
+    height: 100%;
+    object-fit: contain;
+    flex-shrink: 0;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .image-modal-prev,
+  .image-modal-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    font-size: 32px;
+    padding: 15px 20px;
+    cursor: pointer;
+    z-index: 10001;
+    border-radius: 8px;
+    line-height: 1;
+    color: #ffffff;
+    font-weight: 300;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .image-modal-prev:active,
+  .image-modal-next:active {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .image-modal-prev {
+    left: 10px;
+  }
+
+  .image-modal-next {
+    right: 10px;
+  }
+
+  .image-modal-indicators {
+    display: none;
+  }
+
+  .image-modal-counter {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ffffff;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 6px 14px;
+    border-radius: 20px;
   }
 }
 

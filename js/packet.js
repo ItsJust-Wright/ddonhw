@@ -13,30 +13,25 @@ function showPage(pageId, direction = 'forward') {
     const isMobile = window.innerWidth <= 768;
 
     if (isMobile) {
-      // Mobile: Tinder-style swipe animations
-      if (direction === 'backward') {
-        // Swipe right - current page exits right, new page enters from left
-        currentPage.setAttribute('data-exit-direction', 'right');
-        newPage.setAttribute('data-enter-direction', 'left');
-      } else {
-        // Swipe left - current page exits left, new page enters from right
-        currentPage.setAttribute('data-exit-direction', 'left');
-        newPage.setAttribute('data-enter-direction', 'right');
-      }
-
-      // Show new page and start animations
-      newPage.classList.add('active');
+      // Mobile: Simple fade transition
       currentPage.classList.add('page-exit');
       currentPage.classList.remove('active');
 
-      // Clean up after animation
+      // Clean up after fade out
       setTimeout(() => {
         currentPage.classList.remove('page-exit');
-        currentPage.removeAttribute('data-exit-direction');
-        newPage.removeAttribute('data-enter-direction');
-        // Scroll new page to top
+        // Show new page
+        newPage.classList.add('active', 'page-enter');
         newPage.scrollTop = 0;
-      }, 300);
+
+        // Remove enter animation class
+        setTimeout(() => {
+          newPage.classList.remove('page-enter');
+        }, 200);
+      }, 200);
+
+      // Update navigation buttons
+      updateMobileNavButtons();
     } else {
       // Desktop: Original behavior
       newPage.classList.add('active');
@@ -51,8 +46,11 @@ function showPage(pageId, direction = 'forward') {
   } else if (!currentPage) {
     // If no current page, just show the requested page
     newPage.classList.add('active');
-    if (window.innerWidth <= 768 && newPage.scrollTop !== undefined) {
-      newPage.scrollTop = 0;
+    if (window.innerWidth <= 768) {
+      if (newPage.scrollTop !== undefined) {
+        newPage.scrollTop = 0;
+      }
+      updateMobileNavButtons();
     } else {
       window.scrollTo(0, 0);
     }
@@ -170,11 +168,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // Add touch/swipe support for all carousels
   addSwipeSupport();
 
-  // Add page swipe navigation for mobile
-  addPageSwipeSupport();
-
   // Initialize lazy loading for images
   initLazyLoading();
+
+  // Initialize mobile navigation bar
+  initMobileNavBar();
 
   // Add image click handlers for modal (desktop only)
   setTimeout(addImageClickHandlers, 500);
@@ -323,19 +321,17 @@ function switchProject(project) {
     loadAdjacentImages('#page-3 .carousel-track', 0);
   }, 100);
 
-  // Re-add click handlers for new images (desktop only)
-  if (window.innerWidth > 768) {
-    setTimeout(() => {
-      const images = track.querySelectorAll('img.carousel-image');
-      images.forEach((img, index) => {
-        img.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          openImageModal('#page-3 .carousel-container', index);
-        });
+  // Re-add click handlers for new images
+  setTimeout(() => {
+    const images = track.querySelectorAll('img.carousel-image');
+    images.forEach((img, index) => {
+      img.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openImageModal('#page-3 .carousel-container', index);
       });
-    }, 150);
-  }
+    });
+  }, 150);
 }
 
 function moveCarousel(direction) {
@@ -483,19 +479,17 @@ function switchWholesaleProject(project) {
     loadAdjacentImages('.wholesale-track', 0);
   }, 100);
 
-  // Re-add click handlers for new images (desktop only)
-  if (window.innerWidth > 768) {
-    setTimeout(() => {
-      const images = track.querySelectorAll('img.carousel-image');
-      images.forEach((img, index) => {
-        img.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          openImageModal('.wholesale-carousel', index);
-        });
+  // Re-add click handlers for new images
+  setTimeout(() => {
+    const images = track.querySelectorAll('img.carousel-image');
+    images.forEach((img, index) => {
+      img.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openImageModal('.wholesale-carousel', index);
       });
-    }, 150);
-  }
+    });
+  }, 150);
 }
 
 function moveWholesaleCarousel(direction) {
@@ -853,19 +847,17 @@ function switchCncProject(project) {
 
   updateCncCarousel();
 
-  // Re-add click handlers for new images (desktop only)
-  if (window.innerWidth > 768) {
-    setTimeout(() => {
-      const images = track.querySelectorAll('img.carousel-image');
-      images.forEach((img, index) => {
-        img.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          openImageModal('.cnc-carousel', index);
-        });
+  // Re-add click handlers for new images
+  setTimeout(() => {
+    const images = track.querySelectorAll('img.carousel-image');
+    images.forEach((img, index) => {
+      img.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openImageModal('.cnc-carousel', index);
       });
-    }, 150);
-  }
+    });
+  }, 150);
 }
 
 function moveCncCarousel(direction) {
@@ -1075,83 +1067,58 @@ function triggerHaptic(style = 'light') {
   }
 }
 
-// Page swipe navigation for mobile - Tinder style
-function addPageSwipeSupport() {
-  // Only add on mobile devices
+// Initialize mobile navigation bar
+function initMobileNavBar() {
+  // Only create on mobile devices
   if (window.innerWidth > 768) return;
 
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let touchEndX = 0;
-  let touchEndY = 0;
-  let isSwiping = false;
-  const minSwipeDistance = 60;
+  // Create navigation bar
+  const navBar = document.createElement('div');
+  navBar.className = 'mobile-nav-bar';
+  navBar.innerHTML = `
+    <button class="mobile-nav-btn prev-btn" id="mobile-prev-btn">← Prev</button>
+    <button class="mobile-nav-btn home-btn" id="mobile-home-btn">Home</button>
+    <button class="mobile-nav-btn next-btn" id="mobile-next-btn">Next →</button>
+  `;
+  document.body.appendChild(navBar);
 
-  document.addEventListener('touchstart', function(e) {
-    // Ignore if touching interactive elements
-    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a, button')) {
-      return;
-    }
+  // Add event listeners
+  document.getElementById('mobile-prev-btn').addEventListener('click', previousPage);
+  document.getElementById('mobile-home-btn').addEventListener('click', () => showPage('home'));
+  document.getElementById('mobile-next-btn').addEventListener('click', nextPage);
 
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-    isSwiping = false;
-  }, { passive: true });
+  // Initial button state
+  updateMobileNavButtons();
+}
 
-  document.addEventListener('touchmove', function(e) {
-    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a, button')) {
-      return;
-    }
+// Update mobile navigation button states
+function updateMobileNavButtons() {
+  if (window.innerWidth > 768) return;
 
-    const touchX = e.touches[0].clientX;
-    const touchY = e.touches[0].clientY;
-    const deltaX = touchX - touchStartX;
-    const deltaY = touchY - touchStartY;
+  const currentPage = document.querySelector('.page-container.active');
+  if (!currentPage) return;
 
-    // Detect horizontal swipe (more horizontal than vertical)
-    if (!isSwiping && Math.abs(deltaX) > 20 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
-      isSwiping = true;
-      triggerHaptic('light');
-      e.preventDefault();
-    } else if (isSwiping) {
-      e.preventDefault();
-    }
-  }, { passive: false });
+  const currentId = currentPage.id;
+  const prevBtn = document.getElementById('mobile-prev-btn');
+  const nextBtn = document.getElementById('mobile-next-btn');
+  const homeBtn = document.getElementById('mobile-home-btn');
 
-  document.addEventListener('touchend', function(e) {
-    if (e.target.closest('.carousel-container, .project-tab, .go-home-btn, a, button')) {
-      return;
-    }
+  if (!prevBtn || !nextBtn || !homeBtn) return;
 
-    if (!isSwiping) {
-      return;
-    }
+  // Define page order
+  const pageOrder = ['home-page', 'page-1', 'page-2', 'page-3', 'page-4', 'page-5', 'page-6', 'page-7', 'page-8'];
+  const currentIndex = pageOrder.indexOf(currentId);
 
-    touchEndX = e.changedTouches[0].clientX;
-    touchEndY = e.changedTouches[0].clientY;
+  // Disable home button if already on home
+  if (currentId === 'home-page') {
+    homeBtn.disabled = true;
+  } else {
+    homeBtn.disabled = false;
+  }
 
-    const deltaX = touchEndX - touchStartX;
-    const deltaY = touchEndY - touchStartY;
-
-    // Check if swipe was long enough and horizontal
-    if (Math.abs(deltaX) > minSwipeDistance && Math.abs(deltaX) > Math.abs(deltaY)) {
-      triggerHaptic('medium');
-
-      if (deltaX < 0) {
-        // Swiped left - go to next page
-        nextPage();
-      } else {
-        // Swiped right - go to previous page
-        previousPage();
-      }
-    }
-
-    isSwiping = false;
-  }, { passive: true });
-
-  document.addEventListener('touchcancel', function() {
-    isSwiping = false;
-  }, { passive: true });
+  // Always enable prev/next buttons (they loop)
+  prevBtn.disabled = false;
+  nextBtn.disabled = false;
 }
 
 // Lazy Loading Helper Functions
@@ -1205,9 +1172,6 @@ let modalCarouselName = '';
 
 // Open image modal with all images from a carousel
 function openImageModal(carouselSelector, startIndex = 0) {
-  // Only open on desktop
-  if (window.innerWidth <= 768) return;
-
   const carousel = document.querySelector(carouselSelector);
   if (!carousel) return;
 
@@ -1236,23 +1200,25 @@ function openImageModal(carouselSelector, startIndex = 0) {
   modalIndicators.innerHTML = '';
 
   // Add images to modal
-  modalImages.forEach((img, index) => {
+  modalImages.forEach((img) => {
     const imgElement = document.createElement('img');
     imgElement.src = img.src;
     imgElement.alt = img.alt;
     modalTrack.appendChild(imgElement);
   });
 
-  // Add indicators
-  modalImages.forEach((img, index) => {
-    const dot = document.createElement('span');
-    dot.className = 'carousel-dot';
-    if (index === currentModalSlide) {
-      dot.classList.add('active');
-    }
-    dot.onclick = () => goToModalSlide(index);
-    modalIndicators.appendChild(dot);
-  });
+  // Add indicators (desktop only)
+  if (window.innerWidth > 768) {
+    modalImages.forEach((img, index) => {
+      const dot = document.createElement('span');
+      dot.className = 'carousel-dot';
+      if (index === currentModalSlide) {
+        dot.classList.add('active');
+      }
+      dot.onclick = () => goToModalSlide(index);
+      modalIndicators.appendChild(dot);
+    });
+  }
 
   // Update counter
   updateModalCounter();
@@ -1264,8 +1230,10 @@ function openImageModal(carouselSelector, startIndex = 0) {
   // Update carousel position
   updateModalCarousel();
 
-  // Add keyboard navigation
-  document.addEventListener('keydown', handleModalKeyboard);
+  // Add keyboard navigation (desktop only)
+  if (window.innerWidth > 768) {
+    document.addEventListener('keydown', handleModalKeyboard);
+  }
 }
 
 // Close image modal
@@ -1343,11 +1311,8 @@ function handleModalKeyboard(e) {
   }
 }
 
-// Add click handlers to all carousel images (desktop only)
+// Add click handlers to all carousel images (desktop and mobile)
 function addImageClickHandlers() {
-  // Only add on desktop
-  if (window.innerWidth <= 768) return;
-
   // Map carousel containers to their selectors
   const carouselMap = [
     { container: '.quoting-carousel', selector: '.quoting-carousel' },
