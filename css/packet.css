@@ -560,7 +560,7 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     max-width: 100vw !important;
     min-width: 100vw !important;
     height: 100vh;
-    padding: 16px 14px 30px 14px !important;
+    padding: 16px 14px 100px 14px !important;
     margin: 0 !important;
     box-sizing: border-box;
     background-color: #ffffff;
@@ -576,7 +576,7 @@ li, .project-tab, .carousel-btn, .go-home-btn {
   /* Detail pages have navigation bar at bottom */
   body .page-container:not(#home-page) {
     height: calc(100vh - 70px);
-    padding-bottom: 20px !important;
+    padding-bottom: 100px !important;
   }
 
   /* Active page is visible */

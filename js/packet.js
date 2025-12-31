@@ -24,14 +24,16 @@ function showPage(pageId, direction = 'forward') {
         newPage.classList.add('active', 'page-enter');
         newPage.scrollTop = 0;
 
+        // Update navigation buttons after page transition
+        setTimeout(() => {
+          updateMobileNavButtons();
+        }, 50);
+
         // Remove enter animation class
         setTimeout(() => {
           newPage.classList.remove('page-enter');
         }, 200);
       }, 200);
-
-      // Update navigation buttons
-      updateMobileNavButtons();
     } else {
       // Desktop: Original behavior
       newPage.classList.add('active');
@@ -172,11 +174,23 @@ document.addEventListener('DOMContentLoaded', function() {
   initLazyLoading();
 
   // Initialize mobile navigation bar
-  initMobileNavBar();
+  if (window.innerWidth <= 768) {
+    initMobileNavBar();
+    // Force update after a delay to ensure it's visible
+    setTimeout(() => {
+      updateMobileNavButtons();
+      console.log('Mobile nav initialized and updated');
+    }, 200);
+  }
 
   // Also update on resize
   window.addEventListener('resize', function() {
-    updateMobileNavButtons();
+    if (window.innerWidth <= 768) {
+      if (!document.querySelector('.mobile-nav-bar')) {
+        initMobileNavBar();
+      }
+      updateMobileNavButtons();
+    }
   });
 
   // Add image click handlers for modal (desktop only)
