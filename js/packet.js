@@ -1106,7 +1106,10 @@ function updateMobileNavButtons() {
   if (window.innerWidth > 768) return;
 
   const currentPage = document.querySelector('.page-container.active');
-  if (!currentPage) return;
+  if (!currentPage) {
+    console.log('No active page found');
+    return;
+  }
 
   const currentId = currentPage.id;
   const navBar = document.querySelector('.mobile-nav-bar');
@@ -1114,13 +1117,18 @@ function updateMobileNavButtons() {
   const nextBtn = document.getElementById('mobile-next-btn');
   const homeBtn = document.getElementById('mobile-home-btn');
 
-  if (!navBar || !prevBtn || !nextBtn || !homeBtn) return;
+  if (!navBar || !prevBtn || !nextBtn || !homeBtn) {
+    console.log('Nav bar elements not found');
+    return;
+  }
 
   // Hide navigation bar on home page, show on detail pages
   if (currentId === 'home-page') {
     navBar.classList.add('hidden');
+    console.log('Hiding nav bar - on home page');
   } else {
     navBar.classList.remove('hidden');
+    console.log('Showing nav bar - on page:', currentId);
   }
 
   // Always enable prev/next buttons (they loop)

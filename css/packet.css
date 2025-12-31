@@ -560,7 +560,7 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     max-width: 100vw !important;
     min-width: 100vw !important;
     height: 100vh;
-    padding: 16px 14px 20px 14px !important;
+    padding: 16px 14px 30px 14px !important;
     margin: 0 !important;
     box-sizing: border-box;
     background-color: #ffffff;
@@ -576,6 +576,7 @@ li, .project-tab, .carousel-btn, .go-home-btn {
   /* Detail pages have navigation bar at bottom */
   body .page-container:not(#home-page) {
     height: calc(100vh - 70px);
+    padding-bottom: 20px !important;
   }
 
   /* Active page is visible */
@@ -638,21 +639,28 @@ li, .project-tab, .carousel-btn, .go-home-btn {
   }
 
   body .page-container p {
-    font-size: 12px;
-    line-height: 1.45;
-    margin: 3px 0;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 4px 0;
     white-space: normal;
   }
 
   body .page-container li {
-    font-size: 12px;
-    line-height: 1.45;
-    margin: 5px 0;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 6px 0;
     white-space: normal;
   }
 
   body .page-container span {
     white-space: normal;
+    font-size: inherit;
+  }
+
+  /* Make sure all text inside paragraphs and list items use the same size */
+  body .page-container p span,
+  body .page-container li span {
+    font-size: inherit !important;
   }
 
   body .page-container .c17 {
@@ -773,7 +781,7 @@ li, .project-tab, .carousel-btn, .go-home-btn {
     height: 70px;
     background-color: #ffffff;
     border-top: 1px solid #d2d2d7;
-    display: flex;
+    display: flex !important;
     justify-content: space-around;
     align-items: center;
     padding: 0 20px;
@@ -784,7 +792,7 @@ li, .project-tab, .carousel-btn, .go-home-btn {
 
   /* Hide navigation bar when on home page */
   .mobile-nav-bar.hidden {
-    display: none;
+    display: none !important;
   }
 
   .mobile-nav-btn {
